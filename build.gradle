@@ -20,6 +20,7 @@ dependencies {
     annotationProcessor "org.projectlombok:lombok:1.18.12"
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.assertj:assertj-core'
+    testImplementation 'org.mockito:mockito-inline:3.12.2'
 
 }
 
