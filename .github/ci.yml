@@ -16,20 +16,8 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  commitlint:
-    name: Check Commit Message
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - uses: wagoid/commitlint-github-action@v3
-        with:
-          configFile: package.json
-          failOnWarnings: true
   build:
     name: Build
-    needs: [commitlint]
     runs-on: macos-latest
         jdk: 8
       fail-fast: false
