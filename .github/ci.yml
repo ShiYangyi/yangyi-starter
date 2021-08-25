@@ -6,9 +6,10 @@ name: CI
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    branches:
+      - main
+  schedule:
+    - cron: '0 10 * * *' # Once per day at 10am UTC
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -26,3 +27,17 @@ jobs:
         with:
           configFile: package.json
           failOnWarnings: true
+  build:
+    name: Build
+    needs: [commitlint]
+    runs-on: macos-latest
+        jdk: 8
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup JDK 8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 8
+      - name: Build with Gradle
+        run: ./gradlew clean build
