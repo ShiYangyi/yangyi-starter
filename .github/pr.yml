@@ -1,0 +1,21 @@
+name: PR
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  #job1
+  commitlint:
+    name: Check Commit Message
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: wagoid/commitlint-github-action@v3
+        with:
+          configFile: package.json
+          failOnWarnings: true
+
