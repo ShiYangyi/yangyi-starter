@@ -1,0 +1,33 @@
+name: PR
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  commitlint:
+    name: Check Commit Message
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: wagoid/commitlint-github-action@v3
+        with:
+          configFile: package.json
+          failOnWarnings: true
+  build:
+    name: Build
+    needs: [commitlint]
+    runs-on: macos-latest
+        jdk: 8
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup JDK 8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 8
+      - name: Build with Gradle
+        run: ./gradlew clean build
