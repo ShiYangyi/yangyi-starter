@@ -19,7 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class GreetingControllerTest {
     @Autowired
     private MockMvc mockMvc;
-    @Test
+    /*@Test
     public void should_return_string_when_request_greeting_interface() throws Exception {
 
         MockHttpServletRequestBuilder requestBuilder = get("/hello")
@@ -32,5 +32,18 @@ public class GreetingControllerTest {
 
         assertEquals(HttpStatus.OK.value(), response.getStatus());
         assertEquals("hello, world!", response.getContentAsString());
+    }*/
+    @Test
+    public void should_refuse_when_request_greeting_interface() throws Exception {
+
+        MockHttpServletRequestBuilder requestBuilder = get("/hello")
+                .contentType(MediaType.APPLICATION_JSON);
+
+        MockHttpServletResponse response = mockMvc.perform(requestBuilder)
+                .andExpect(status().is4xxClientError())
+                .andReturn()
+                .getResponse();
+
+        assertEquals(HttpStatus.FORBIDDEN.value(), response.getStatus());
     }
 }
