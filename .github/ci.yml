@@ -9,8 +9,6 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-  schedule:
-    - cron: '0 10 * * *' # Once per day at 10am UTC
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -19,7 +17,7 @@ on:
 jobs:
   commitlint:
     name: Check Commit Message
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
         with:
@@ -28,66 +26,3 @@ jobs:
         with:
           configFile: package.json
           failOnWarnings: true
-  # This workflow contains a job called "build"
-  build:
-    name: Build
-      needs: [ commitlint ]
-      # The type of runner that the job will run on
-      runs-on: ${{ matrix.os }}
-      strategy:
-        matrix:
-          os: [ ubuntu-latest, macos-latest, windows-latest ]
-          jdk: [ 8,11,16 ]
-        fail-fast: false
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
-      - name: Setup JDK ${{ matrix.jdk }}
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ matrix.jdk }}
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16
-
-      - name: Build with Gradle
-        run: ./gradlew clean build
-  # This workflow contains a job called "Update Coveralls"
-  coveralls:
-    name: Update Coveralls
-    needs: [ build ]
-    runs-on: macos-latest
-    env:
-      COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-    steps:
-      - uses: actions/checkout@v2
-      - name: Setup JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: 8
-      - name: Build with Gradle
-        run: ./gradlew clean coverage
-      - name: Update Coveralls
-        run: ./gradlew coveralls
-
-  # This workflow contains a job called "publish"
-  publish:
-    name: Publish
-    needs: [ build ]
-    runs-on: macos-latest
-    env:
-      GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
-      GPG_SIGNING_PASSWORD: ${{ secrets.GPG_SIGNING_PASSWORD }}
-      NEXUS_REPO_PASSWORD: ${{ secrets.NEXUS_REPO_PASSWORD }}
-      NEXUS_REPO_USERNAME: ${{ secrets.NEXUS_REPO_USERNAME }}
-    steps:
-      - uses: actions/checkout@v2
-      - name: Setup JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: 8
-      - name: Publish to Nexus
-        run: ./gradlew publish
