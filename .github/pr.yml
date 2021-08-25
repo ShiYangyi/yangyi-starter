@@ -9,6 +9,8 @@ jobs:
   build:
     name: Build
     runs-on: macos-latest
+    strategy:
+      matrix:
         jdk: 8
       fail-fast: false
     steps:
