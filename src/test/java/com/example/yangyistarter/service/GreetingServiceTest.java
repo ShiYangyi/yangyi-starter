@@ -18,4 +18,10 @@ public class GreetingServiceTest {
         when(greetingService.hello()).thenReturn("hello, world!");
         assertEquals("hello, world!", greetingService.hello());
     }
+
+    @Test
+    public void should_refused_when_access_greeting_interface() {
+        when(greetingService.hello()).thenReturn(null);
+        assertEquals(null, greetingService.hello());
+    }
 }
