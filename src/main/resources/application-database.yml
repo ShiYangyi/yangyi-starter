@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/user?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&serverTimezone=UTC&useSSL=true
+    username: root
+    password: password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  # 自动读取spring.datasource配置进行迁移操作
+  flyway:
+    enabled: true
+    encoding: UTF-8
+    url: jdbc:mysql://localhost:3306
+    schemas: user
+    user: root
+    password: password
