@@ -13,27 +13,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-/*@AutoConfigureMockMvc
-@SpringBootTest
-public class GreetingControllerTest {
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Test
-    public void should_refuse_when_request_greeting_interface() throws Exception {
-
-        MockHttpServletRequestBuilder requestBuilder = get("/hello")
-                .contentType(MediaType.APPLICATION_JSON);
-
-        MockHttpServletResponse response = mockMvc.perform(requestBuilder)
-                .andExpect(status().is4xxClientError())
-                .andReturn()
-                .getResponse();
-
-        assertEquals(HttpStatus.FORBIDDEN.value(), response.getStatus());
-    }
-}*/
-
 @AutoConfigureMockMvc
 @SpringBootTest
 public class GreetingControllerTest {
@@ -48,7 +27,7 @@ public class GreetingControllerTest {
                 .andExpect(status().is4xxClientError());
     }
 
-    @WithMockUser(username="admin")
+    @WithMockUser
     @Test
     public void should_return_string_when_access_to_interface() throws Exception {
 
