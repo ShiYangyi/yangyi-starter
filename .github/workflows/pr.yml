@@ -19,5 +19,5 @@ jobs:
           java-version: 8
       - name: Build with Gradle
         run: ./gradlew clean build
-      _ name: Check test coverage
+      - name: Check test coverage
         run: ./gradlew jacocoTestCoverageVerification
