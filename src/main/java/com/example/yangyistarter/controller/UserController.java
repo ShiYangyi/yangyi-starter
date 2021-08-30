@@ -2,6 +2,7 @@ package com.example.yangyistarter.controller;
 
 import com.example.yangyistarter.entity.User;
 import com.example.yangyistarter.service.UserService;
+import com.example.yangyistarter.util.ResponseCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -27,8 +28,9 @@ public class UserController {
     UserService userService;
 
     @PostMapping("/register")
-    public void register(@RequestBody User user) {
+    public ResponseCode register(@RequestBody User user) {
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        userService.register(user);
+        return userService.register(user);
     }
+
 }
