@@ -29,7 +29,7 @@ public class UserControllerTest {
 
         //验证controller监听HTTP请求,调用MockMvc的perform()并提供要测试的URL
         MvcResult mvcResult = mockMvc.perform(post("/users/register")
-                        //.content(curUser.toString())
+                        //.content(objectMapper.writeValueAsString(curUser))
                         .content(curJson)
                         .contentType(MediaType.APPLICATION_JSON))
                 //.andExpect(status().isOk())
