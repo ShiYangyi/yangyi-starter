@@ -1,11 +1,10 @@
 package com.example.yangyistarter.util;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
 
 import java.util.Map;
 
-@Data
+@Getter
 @AllArgsConstructor
 public class ResponseMessage {
     private int code;
