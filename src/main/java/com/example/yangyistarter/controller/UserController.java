@@ -3,7 +3,6 @@ package com.example.yangyistarter.controller;
 import com.example.yangyistarter.entity.User;
 import com.example.yangyistarter.service.UserService;
 import com.example.yangyistarter.util.ResponseCode;
-import com.example.yangyistarter.util.UserLoginToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -97,11 +96,5 @@ public class UserController {
     public Object login(@RequestBody User user) {
 
         return userService.login(user);
-    }
-
-    @UserLoginToken//加上这个注解后，表示接口必须要登陆获取token后，在请求头加上token通过验证后才可以访问。
-    @GetMapping("/messages")
-    public String getMessage() {
-        return "你已通过token验证";
     }
 }
