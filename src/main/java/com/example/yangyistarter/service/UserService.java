@@ -68,7 +68,7 @@ public class UserService {
         return loginResponse;
     }
 
-    private User findUserByName(User user) {
+    public User findUserByName(User user) {
 
         for (User curUser : userRepository.findAll()) {
             if (curUser.getName().equals(user.getName())) {
