@@ -113,4 +113,52 @@ public class UserServiceTest {
         LoginResponse loginResponse = userService.login(user);
         Assertions.assertEquals("登陆成功", loginResponse.getMessage());
     }
+
+    @Test
+    public void should_return_user_when_given_valid_username() {
+
+        User user = User.builder().id(new BigInteger(String.valueOf(1111))).name("zly").password("1").build();
+        String savedPassword = "$2a$10$lsWFF4FHNj2Y3dyKv1iCf.4pMytV4dPgfoVmdX18w3V3Q2lbW1/ae";//对应密码1
+        User savedUser = User.builder().id(new BigInteger(String.valueOf(1111))).name("zly").password(savedPassword).build();
+        when(userRepository.findAll()).thenReturn(Collections.singletonList(savedUser));
+        UserService userService = new UserService(userRepository);
+        Assertions.assertEquals(savedUser, userService.findUserByName(user));
+
+    }
+
+    @Test
+    public void should_return_null_when_given_error_username() {
+        User user = User.builder().id(new BigInteger(String.valueOf(1111))).name("po").password("1").build();
+        String savedPassword = "$2a$10$lsWFF4FHNj2Y3dyKv1iCf.4pMytV4dPgfoVmdX18w3V3Q2lbW1/ae";//对应密码1
+        User savedUser = User.builder().id(new BigInteger(String.valueOf(1111))).name("po").password(savedPassword).build();
+        when(userRepository.findAll()).thenReturn(Collections.singletonList(savedUser));
+        UserService userService = new UserService(userRepository);
+        Assertions.assertNull(userService.findUserByName(curUser));
+    }
+
+    @Test
+    public void should_return_null_when_given_invalid_username() {
+        User user = User.builder().id(new BigInteger(String.valueOf(1111))).name("zly").password("1").build();
+        when(userRepository.findAll()).thenReturn(new ArrayList<User>(){});
+        UserService userService = new UserService(userRepository);
+        Assertions.assertNull(userService.findUserByName(user));
+    }
+
+    @Test
+    public void should_return_user_when_given_valid_id() {
+
+        User user = User.builder().id(new BigInteger(String.valueOf(1111))).name("zly").password("1").build();
+        when(userRepository.getById(user.getId())).thenReturn(user);
+        UserService userService = new UserService(userRepository);
+        Assertions.assertEquals(user, userService.findUserById(user.getId()));
+
+    }
+
+    @Test
+    public void should_return_null_when_given_invalid_id() {
+        User user = User.builder().id(new BigInteger(String.valueOf(1111))).name("zly").password("1").build();
+        when(userRepository.getById(user.getId())).thenReturn(null);
+        UserService userService = new UserService(userRepository);
+        Assertions.assertNull(userService.findUserById(user.getId()));
+    }
 }
