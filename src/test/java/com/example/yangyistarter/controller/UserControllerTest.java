@@ -1,5 +1,6 @@
 package com.example.yangyistarter.controller;
 
+import com.example.yangyistarter.entity.Request;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -32,7 +33,24 @@ public class UserControllerTest {
                         //.content(objectMapper.writeValueAsString(curUser))
                         .content(curJson)
                         .contentType(MediaType.APPLICATION_JSON))
-                //.andExpect(status().isOk())
+                .andReturn();
+        assertThat(mvcResult.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
+    }
+
+    @Test
+    public void should_return_status_200_when_login() throws Exception {
+
+        //这里不要用字符串来写，而要写一个请求类
+        //Request{name='syy', password='1'}
+        //String curJson = "{\"name\": \"po\", \"password\": \"0\" }";
+        Request user = Request.builder().name("po").password("0").build();
+        String curJson = user.toString();
+
+        //验证controller监听HTTP请求,调用MockMvc的perform()并提供要测试的URL
+        MvcResult mvcResult = mockMvc.perform(post("/users/login")
+                        //.content(objectMapper.writeValueAsString(curUser))
+                        .content(curJson)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
         assertThat(mvcResult.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
     }
