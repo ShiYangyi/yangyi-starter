@@ -35,10 +35,10 @@ public class User {
         UserBuilder() {
         }
 
-        /*public UserBuilder id(BigInteger id) {
+        public UserBuilder id(BigInteger id) {
             this.id = id;
             return this;
-        }*/
+        }
 
         public UserBuilder name(String name) {
             this.name = name;

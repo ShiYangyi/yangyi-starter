@@ -1,5 +1,6 @@
 package com.example.yangyistarter.service;
 
+import com.example.yangyistarter.entity.LoginResponse;
 import com.example.yangyistarter.entity.User;
 import com.example.yangyistarter.repository.UserRepository;
 import com.example.yangyistarter.util.ResponseCode;
@@ -7,9 +8,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Collections;
 
 import static org.mockito.Mockito.when;
@@ -17,8 +19,8 @@ import static org.mockito.Mockito.when;
 @ExtendWith(SpringExtension.class)
 public class UserServiceTest {
 
-    @MockBean
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+    /*@MockBean
+    private BCryptPasswordEncoder bCryptPasswordEncoder;*/
 
     @MockBean
     private UserRepository userRepository;
@@ -52,7 +54,9 @@ public class UserServiceTest {
         // 由于findAll()方法返回的是含有User的列表，所以这里应该指定mock对象执行该方法后的返回值为含有和curUser同名的用户的列表，
         // 此时是不会真正执行findAll()。
         User user = User.builder().name("zly").password("1").build();
-        when(userRepository.findAll()).thenReturn(Collections.singletonList(user));
+        String savedPassword = "$2a$10$lsWFF4FHNj2Y3dyKv1iCf.4pMytV4dPgfoVmdX18w3V3Q2lbW1/ae";//对应密码1
+        User savedUser = User.builder().name("zly").password(savedPassword).build();
+        when(userRepository.findAll()).thenReturn(Collections.singletonList(savedUser));
         UserService userService = new UserService(userRepository);
         ResponseCode responseCode = userService.register(curUser);
 
@@ -64,11 +68,97 @@ public class UserServiceTest {
     public void should_save_user_when_different_name() {
 
         User user = User.builder().name("小明").password("1").build();
-        when(userRepository.findAll()).thenReturn(Collections.singletonList(user));
+        String savedPassword = "$2a$10$lsWFF4FHNj2Y3dyKv1iCf.4pMytV4dPgfoVmdX18w3V3Q2lbW1/ae";//对应密码1
+        User savedUser = User.builder().name("小明").password(savedPassword).build();
+        when(userRepository.findAll()).thenReturn(Collections.singletonList(savedUser));
         UserService userService = new UserService(userRepository);
         ResponseCode responseCode = userService.register(curUser);
 
         Assertions.assertEquals("user registered successful", responseCode.getMessage());
 
+    }
+
+    @Test
+    public void should_failed_when_login_user_not_exists() {
+
+        User user = User.builder().name("zly").password("1").build();
+        UserService userService = new UserService(userRepository);
+        //下面写法错误，因为这里mock的对象是userRepository，userService不是mock的对象，所以调用findUserByName()是会真正执行逻辑的。
+        // 正确的测试写法是：由于使用到findUserByName()，里面执行了userRepository.findAll()，所以正确写法是mock对象执行findAll()，期望返回空列表。
+        //when(userService.findUserByName(user)).thenReturn(null);
+        when(userRepository.findAll()).thenReturn(new ArrayList<User>(){});
+        Assertions.assertEquals("登录失败,用户不存在", userService.login(user).getMessage());
+
+    }
+
+    @Test
+    public void should_failed_when_login_error_password() {
+
+        User user = User.builder().name("zly").password("1").build();
+        String savedPassword = "$2a$10$lsWFF4FHNj2Y3dyKv1iCf.4pMytV4dPgfoVmdX18w3V3Q2lbW1/ae";//对应密码1
+        User savedUser = User.builder().name("zly").password(savedPassword).build();
+        UserService userService = new UserService(userRepository);
+        when(userRepository.findAll()).thenReturn(Collections.singletonList(savedUser));
+        Assertions.assertEquals("登录失败,密码错误", userService.login(curUser).getMessage());
+    }
+
+    @Test
+    public void should_login_when_password_correct() {
+
+        User user = User.builder().id(new BigInteger(String.valueOf(1111))).name("zly").password("1").build();
+        String savedPassword = "$2a$10$lsWFF4FHNj2Y3dyKv1iCf.4pMytV4dPgfoVmdX18w3V3Q2lbW1/ae";//对应密码1
+        User savedUser = User.builder().id(new BigInteger(String.valueOf(1111))).name("zly").password(savedPassword).build();
+        UserService userService = new UserService(userRepository);
+        when(userRepository.findAll()).thenReturn(Collections.singletonList(savedUser));
+        LoginResponse loginResponse = userService.login(user);
+        Assertions.assertEquals("登陆成功", loginResponse.getMessage());
+    }
+
+    @Test
+    public void should_return_user_when_given_valid_username() {
+
+        User user = User.builder().id(new BigInteger(String.valueOf(1111))).name("zly").password("1").build();
+        String savedPassword = "$2a$10$lsWFF4FHNj2Y3dyKv1iCf.4pMytV4dPgfoVmdX18w3V3Q2lbW1/ae";//对应密码1
+        User savedUser = User.builder().id(new BigInteger(String.valueOf(1111))).name("zly").password(savedPassword).build();
+        when(userRepository.findAll()).thenReturn(Collections.singletonList(savedUser));
+        UserService userService = new UserService(userRepository);
+        Assertions.assertEquals(savedUser, userService.findUserByName(user));
+
+    }
+
+    @Test
+    public void should_return_null_when_given_error_username() {
+        User user = User.builder().id(new BigInteger(String.valueOf(1111))).name("po").password("1").build();
+        String savedPassword = "$2a$10$lsWFF4FHNj2Y3dyKv1iCf.4pMytV4dPgfoVmdX18w3V3Q2lbW1/ae";//对应密码1
+        User savedUser = User.builder().id(new BigInteger(String.valueOf(1111))).name("po").password(savedPassword).build();
+        when(userRepository.findAll()).thenReturn(Collections.singletonList(savedUser));
+        UserService userService = new UserService(userRepository);
+        Assertions.assertNull(userService.findUserByName(curUser));
+    }
+
+    @Test
+    public void should_return_null_when_given_invalid_username() {
+        User user = User.builder().id(new BigInteger(String.valueOf(1111))).name("zly").password("1").build();
+        when(userRepository.findAll()).thenReturn(new ArrayList<User>(){});
+        UserService userService = new UserService(userRepository);
+        Assertions.assertNull(userService.findUserByName(user));
+    }
+
+    @Test
+    public void should_return_user_when_given_valid_id() {
+
+        User user = User.builder().id(new BigInteger(String.valueOf(1111))).name("zly").password("1").build();
+        when(userRepository.getById(user.getId())).thenReturn(user);
+        UserService userService = new UserService(userRepository);
+        Assertions.assertEquals(user, userService.findUserById(user.getId()));
+
+    }
+
+    @Test
+    public void should_return_null_when_given_invalid_id() {
+        User user = User.builder().id(new BigInteger(String.valueOf(1111))).name("zly").password("1").build();
+        when(userRepository.getById(user.getId())).thenReturn(null);
+        UserService userService = new UserService(userRepository);
+        Assertions.assertNull(userService.findUserById(user.getId()));
     }
 }

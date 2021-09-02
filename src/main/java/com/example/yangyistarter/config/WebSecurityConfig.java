@@ -27,11 +27,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and().formLogin()//增加表单登陆
                 .and().httpBasic();//增加Basic认证
+                /*.and()//这一条表示下面是其他的认证
+                *//*上面是标准的Spring Security的处理流程，下面两行是将自定义的JWT方法加入到Spring Security的处理流程中*//*
+                .addFilter(new JWTLoginFilter(authenticationManager()))
+                .addFilter(new JwtAuthenticationFilter(authenticationManager()));*/
+
     }
 
     @Override
     public void configure(WebSecurity web) throws Exception {
         //ignore,对HttpSecurity做补充，这里排除掉/users/register路径，该路径不加入到Spring Security中，也就是不会做安全校验
         web.ignoring().antMatchers("/users/register");
+        web.ignoring().antMatchers("/users/login");
     }
+
+    //对用户进行配置
+    /*@Override
+    public void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
+    }*/
 }
