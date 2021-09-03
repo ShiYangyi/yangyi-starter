@@ -1,6 +1,6 @@
 package com.example.yangyistarter.controller;
 
-import com.example.yangyistarter.entity.Request;
+import com.example.yangyistarter.dto.UserDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -11,6 +11,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.math.BigInteger;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
@@ -26,7 +27,11 @@ public class UserControllerTest {
     @Test
     public void should_return_status_200_when_register() throws Exception {
 
-        String curJson = "{\"name\": \"po\", \"password\": \"0\" }";
+        //String curJson = "{\"name\": \"po00\", \"password\": \"000000\" }";
+        UserDTO user = UserDTO.builder().id(BigInteger.valueOf(1111L)).name("poo").password("000000").build();
+        String curJson = user.toString();
+        /*Request user = Request.builder().name("poo").password("000000").build();
+        String curJson = user.toString();*/
 
         //验证controller监听HTTP请求,调用MockMvc的perform()并提供要测试的URL
         MvcResult mvcResult = mockMvc.perform(post("/users/register")
@@ -43,7 +48,8 @@ public class UserControllerTest {
         //这里不要用字符串来写，而要写一个请求类
         //Request{name='syy', password='1'}
         //String curJson = "{\"name\": \"po\", \"password\": \"0\" }";
-        Request user = Request.builder().name("po").password("0").build();
+        //Request user = Request.builder().name("poo").password("000000").build();
+        UserDTO user = UserDTO.builder().id(BigInteger.valueOf(1111L)).name("poo").password("000000").build();
         String curJson = user.toString();
 
         //验证controller监听HTTP请求,调用MockMvc的perform()并提供要测试的URL
