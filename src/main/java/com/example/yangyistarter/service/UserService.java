@@ -1,5 +1,6 @@
 package com.example.yangyistarter.service;
 
+import com.example.yangyistarter.dto.UserDTO;
 import com.example.yangyistarter.entity.LoginResponse;
 import com.example.yangyistarter.entity.User;
 import com.example.yangyistarter.repository.UserRepository;
@@ -42,19 +43,20 @@ public class UserService {
 
     }*/
 
-    public LoginResponse login(User user) {
+    public LoginResponse login(UserDTO userDTO) {
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
         //这里不要用JSONObject类，因为现在字段少，所以这样写可以，但是字段多就不适合了，所以最好是新建一个返回类，把需要的东西作为字段填充进去
         LoginResponse loginResponse = new LoginResponse();
         /*JSONObject jsonObject = new JSONObject();*/
 
+        User user = User.builder().id(userDTO.getId()).name(userDTO.getName()).password(userDTO.getPassword()).build();
         User userForBase = findUserByName(user);
         /*User userForBase = findUserById(user.getId());*/
         if (userForBase == null) {
             loginResponse.setMessage("登录失败,用户不存在");
         } else {
-            if(!bCryptPasswordEncoder.matches(user.getPassword(), userForBase.getPassword())) {
+            if(!bCryptPasswordEncoder.matches(userDTO.getPassword(), userForBase.getPassword())) {
             //if (!userForBase.getPassword().equals(bCryptPasswordEncoder.encode(user.getPassword()))) {
                 loginResponse.setMessage("登录失败,密码错误");
             } else {

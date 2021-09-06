@@ -1,5 +1,6 @@
 package com.example.yangyistarter.controller;
 
+import com.example.yangyistarter.dto.UserDTO;
 import com.example.yangyistarter.entity.User;
 import com.example.yangyistarter.service.UserService;
 import com.example.yangyistarter.util.ResponseCode;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,9 +27,10 @@ public class UserController {
     UserService userService;
 
     @PostMapping("/register")
-    public ResponseCode register(@RequestBody User user) {
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        return userService.register(user);
+    //@Validated
+    public ResponseCode register(@RequestBody @Valid UserDTO userDTO) {
+        userDTO.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
+        return userService.register(User.builder().id(userDTO.getId()).name(userDTO.getName()).password(userDTO.getPassword()).build());
     }
 
     /*
@@ -93,8 +96,9 @@ public class UserController {
     }*/
 
     @PostMapping("/login")
-    public Object login(@RequestBody User user) {
+    //@Validated
+    public Object login(@RequestBody @Valid UserDTO userDTO) {
 
-        return userService.login(user);
+        return userService.login(userDTO);
     }
 }

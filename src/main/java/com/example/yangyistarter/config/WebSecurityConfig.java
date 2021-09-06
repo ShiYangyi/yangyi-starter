@@ -2,7 +2,6 @@ package com.example.yangyistarter.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
@@ -23,7 +22,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .csrf().disable()
                 .authorizeRequests()
-                //.antMatchers(HttpMethod.GET, "/hello").permitAll()
+                .antMatchers("/users/*").permitAll()
                 .anyRequest().authenticated()
                 .and().formLogin()//增加表单登陆
                 .and().httpBasic();//增加Basic认证
@@ -34,12 +33,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     }
 
-    @Override
+/*    @Override
     public void configure(WebSecurity web) throws Exception {
         //ignore,对HttpSecurity做补充，这里排除掉/users/register路径，该路径不加入到Spring Security中，也就是不会做安全校验
         web.ignoring().antMatchers("/users/register");
         web.ignoring().antMatchers("/users/login");
-    }
+    }*/
 
     //对用户进行配置
     /*@Override

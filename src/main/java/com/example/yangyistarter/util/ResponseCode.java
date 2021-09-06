@@ -9,12 +9,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public enum ResponseCode {
-    //error code
-    USER_ALREADY_EXISTS(10000, "user already exists"),
-    USER_REGISTER_SUCCESS(10001, "user registered successful");
+    INVALID_REQUEST(10000, "invalid request"),
+    SERVER_ERROR(10001, "server error"),
+    USER_ALREADY_EXISTS(10002, "user already exists"),
+    USER_REGISTER_SUCCESS(10003, "user registered successful");
 
     private static final Set<String> Response_CODE_VALUES = ImmutableSet.copyOf(
-            Arrays.stream(values()).map(Enum::toString).collect(Collectors.toSet())
+            //注意写法，把获取到的code组成set集合。
+            Arrays.stream(values()).map((item)->String.valueOf(item.getCode())).collect(Collectors.toSet())
     );
 
     private final int code;
@@ -28,9 +30,16 @@ public enum ResponseCode {
     public String getMessage() {
         return message;
     }
+    public int getCode() {
+        return code;
+    }
 
     @JsonValue
     public ResponseMessage toResponseMessage() {
         return new ResponseMessage(code, message, new HashMap<>());
+    }
+
+    public static boolean contains(String code) {
+        return Response_CODE_VALUES.contains(code);
     }
 }

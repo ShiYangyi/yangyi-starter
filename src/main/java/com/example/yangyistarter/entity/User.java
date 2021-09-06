@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import javax.persistence.*;
 import java.math.BigInteger;
 
@@ -15,6 +14,7 @@ import java.math.BigInteger;
 //为什么把注解delombok后，这个注解注释掉还是会出错？不是已经产生了等价的方法了吗？？？？？？？？？？？？
 @Entity
 @Table(name = "user")
+//这个类是与数据库repository层交互的，只需要对接口（与前端）交互的类写上限制验证的注解即可，即dto文件夹下。
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
