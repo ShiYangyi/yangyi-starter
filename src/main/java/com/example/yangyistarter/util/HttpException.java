@@ -1,9 +1,6 @@
 package com.example.yangyistarter.util;
 
-import lombok.Getter;
-
 public class HttpException extends RuntimeException {
-    @Getter
     private ResponseCode responseCode;
 
     public HttpException(ResponseCode code, String message) {
@@ -11,7 +8,11 @@ public class HttpException extends RuntimeException {
         this.responseCode = code;
     }
 
-    public HttpException(ResponseCode code, Throwable cause) {
+    public ResponseCode getResponseCode() {
+        return this.responseCode;
+    }
+
+    /*public HttpException(ResponseCode code, Throwable cause) {
         super(code.getMessage(), cause);
         this.responseCode = code;
     }
@@ -23,5 +24,5 @@ public class HttpException extends RuntimeException {
 
     public HttpException(ResponseCode code) {
         this(code, code.getMessage());
-    }
+    }*/
 }
