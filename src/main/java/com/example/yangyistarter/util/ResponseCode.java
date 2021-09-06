@@ -15,7 +15,8 @@ public enum ResponseCode {
     USER_REGISTER_SUCCESS(10003, "user registered successful");
 
     private static final Set<String> Response_CODE_VALUES = ImmutableSet.copyOf(
-            Arrays.stream(values()).map(Enum::toString).collect(Collectors.toSet())
+            //注意写法，把获取到的code组成set集合。
+            Arrays.stream(values()).map((item)->String.valueOf(item.getCode())).collect(Collectors.toSet())
     );
 
     private final int code;
