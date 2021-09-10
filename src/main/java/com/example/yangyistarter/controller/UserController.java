@@ -1,6 +1,7 @@
 package com.example.yangyistarter.controller;
 
 import com.example.yangyistarter.dto.UserDTO;
+import com.example.yangyistarter.entity.LoginResponse;
 import com.example.yangyistarter.entity.User;
 import com.example.yangyistarter.service.UserService;
 import com.example.yangyistarter.util.ResponseCode;
@@ -16,6 +17,8 @@ import javax.validation.Valid;
 @RequestMapping("/users")
 public class UserController {
 
+    //bCryptPasswordEncoder()方法带有Bean注解，注解用来在Spring应用上下文中声明PasswordEncoder bean。
+    // 那么对于bCryptPasswordEncoder()方法的任何调用都会被拦截，并且返回应用上下文中的bean实例。
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
@@ -100,5 +103,25 @@ public class UserController {
     public Object login(@RequestBody @Valid UserDTO userDTO) {
 
         return userService.login(userDTO);
+    }
+
+    /*@UserLoginToken//加上这个注解后，表示接口必须要登陆获取token后，在请求头加上token通过验证后才可以访问。
+    @GetMapping("/messages")
+    public Object getMessage(@CurrentUser User user) {
+        return user;
+    }*/
+
+    /*@GetMapping("/messages")
+    public Object getMessage(@AuthenticationPrincipal User user) {
+        return user;
+    }*/
+
+    //第一步：先检查接口是否可以访问成功
+    @GetMapping("/messages")
+    public LoginResponse getMessage() {
+
+        User curUser = userService.getCurUser();
+        LoginResponse loginResponse = new LoginResponse(User.builder().name(curUser.getName()).build());
+        return loginResponse;
     }
 }
