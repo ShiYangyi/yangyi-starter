@@ -1,13 +1,14 @@
 package com.example.yangyistarter.controller;
 
 import com.example.yangyistarter.dto.UserDTO;
-import com.example.yangyistarter.entity.LoginResponse;
 import com.example.yangyistarter.entity.User;
 import com.example.yangyistarter.service.UserService;
 import com.example.yangyistarter.util.ResponseCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
@@ -117,11 +118,24 @@ public class UserController {
     }*/
 
     //第一步：先检查接口是否可以访问成功
-    @GetMapping("/messages")
+    /*@GetMapping("/messages")
     public LoginResponse getMessage() {
 
         User curUser = userService.getCurUser();
         LoginResponse loginResponse = new LoginResponse(User.builder().name(curUser.getName()).build());
         return loginResponse;
+    }*/
+
+    /*@GetMapping("/messages")
+    //在这里，按照principal来获取用户信息获取不到，因为在程序里把用户信息填充到了Authentication，principal中没有填入任何东西
+    public String getMessage(@CurrentSecurityContext(expression = "authentication.principal")
+                                     Principal principal) {
+        return principal.getName();
+    }*/
+
+    @GetMapping("/messages")
+    public String getMessage(@CurrentSecurityContext(expression = "authentication")
+                                     Authentication authentication) {
+        return authentication.getName();
     }
 }
