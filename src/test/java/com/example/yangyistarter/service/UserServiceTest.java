@@ -9,16 +9,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
@@ -177,9 +173,9 @@ public class UserServiceTest {
         //Assertions.assertNull(userService.findUserById(user.getId()).get());
     }
 
-    @Test
+    /*@Test
     public void should_return_user_when_authentication_not_null() {
-        /*
+        *//*
         这里没有使用模板
 mockito使用模板 ：
  //mock creation
@@ -192,7 +188,7 @@ mockito使用模板 ：
  //verification
  verify(mockedList).add("one");
  verify(mockedList).clear();
-         */
+         *//*
         User user = User.builder().id(new BigInteger(String.valueOf(1111))).name("zly").password("10000000000").build();
         Authentication authentication = mock(Authentication.class);
         //下面这条语句把authentication存储到SecurityContextHolder中。
@@ -212,6 +208,5 @@ mockito使用模板 ：
         SecurityContextHolder.getContext().setAuthentication(securityContext.getAuthentication());
         UserService userService = new UserService(userRepository);
         Assertions.assertNull(userService.getCurUser());
-    }
-
+    }*/
 }
