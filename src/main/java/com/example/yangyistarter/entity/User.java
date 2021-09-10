@@ -8,6 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.math.BigInteger;
+import java.security.Principal;
 import java.util.Collection;
 
 @Getter
@@ -17,7 +18,7 @@ import java.util.Collection;
 @Entity
 @Table(name = "user")
 //这个类是与数据库repository层交互的，只需要对接口（与前端）交互的类写上限制验证的注解即可，即dto文件夹下。
-public class User implements UserDetails {
+public class User implements UserDetails, Principal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private BigInteger id;
