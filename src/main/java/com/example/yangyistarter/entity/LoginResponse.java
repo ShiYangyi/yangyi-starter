@@ -15,7 +15,7 @@ public class LoginResponse {
     public LoginResponse() {
     }
 
-    public LoginResponse(UserDTO user) {
+    /*public LoginResponse(UserDTO user) {
         this.user = user;
-    }
+    }*/
 }
