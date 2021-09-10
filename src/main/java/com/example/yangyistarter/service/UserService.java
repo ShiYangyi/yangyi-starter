@@ -4,12 +4,15 @@ import com.example.yangyistarter.dto.UserDTO;
 import com.example.yangyistarter.entity.LoginResponse;
 import com.example.yangyistarter.entity.User;
 import com.example.yangyistarter.repository.UserRepository;
-import com.example.yangyistarter.util.JwtLoginUtil;
 import com.example.yangyistarter.util.ResponseCode;
+import com.example.yangyistarter.util.UserToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -60,13 +63,16 @@ public class UserService {
             //if (!userForBase.getPassword().equals(bCryptPasswordEncoder.encode(user.getPassword()))) {
                 loginResponse.setMessage("登录失败,密码错误");
             } else {
-                String token = JwtLoginUtil.getToken(userForBase);
+                UserToken userToken = new UserToken(userForBase.getId().toString(), userForBase.getPassword(), 14400);
+                String token = userToken.getToken();
+                /*Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                String token = JWTLoginFilter.getToken(authentication);*/
                 loginResponse.setToken(token);
-                loginResponse.setUser(userForBase);
+                loginResponse.setUser(User.builder().name(userForBase.getName()).build());
+                //loginResponse.setUser(userForBase);
                 loginResponse.setMessage("登陆成功");
             }
         }
-
         return loginResponse;
     }
 
@@ -80,7 +86,19 @@ public class UserService {
         return null;
     }
 
-    public User findUserById(BigInteger userId) {
-        return userRepository.getById(userId);
+    public Optional<User> findUserById(BigInteger userId) {
+        //不要使用getById()，改用findById()
+        return userRepository.findById(userId);
+    }
+
+    //获取当前登陆的用户
+    public User getCurUser() {
+        User user = null;
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null) {
+            //把Object类强转为Optional<User>
+            user = (User) authentication.getPrincipal();
+        }
+        return user;
     }
 }
