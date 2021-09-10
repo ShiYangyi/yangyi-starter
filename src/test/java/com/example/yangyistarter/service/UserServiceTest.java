@@ -9,12 +9,16 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
-
+import java.util.Optional;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
@@ -152,18 +156,62 @@ public class UserServiceTest {
     @Test
     public void should_return_user_when_given_valid_id() {
 
-        User user = User.builder().id(new BigInteger(String.valueOf(1111))).name("zly").password("1").build();
-        when(userRepository.getById(user.getId())).thenReturn(user);
+        User user = User.builder().id(new BigInteger(String.valueOf(1111))).name("zly11").password("1111111").build();
+        when(userRepository.findById(any())).thenReturn(Optional.of(user));
+        //下面语句出错的原因是：userRepository是一个mock的对象，那么userRepository.findById(user.getId())这部分结果肯定是空，那么用这个结果去调用get()方法，肯定会抛错，
+        //所以改正的办法是换成上面的when()语句，不管findById()中传入任何参数，都让它返回user的Optional类。
+        //when(userRepository.findById(user.getId()).get()).thenReturn(user);
+        //when(userRepository.getById(user.getId())).thenReturn(user);
         UserService userService = new UserService(userRepository);
-        Assertions.assertEquals(user, userService.findUserById(user.getId()));
+        Assertions.assertEquals(user, userService.findUserById(user.getId()).get());
 
     }
 
     @Test
-    public void should_return_null_when_given_invalid_id() {
+    public void should_return_user_not_present_when_given_invalid_id() {
         User user = User.builder().id(new BigInteger(String.valueOf(1111))).name("zly").password("1").build();
         when(userRepository.getById(user.getId())).thenReturn(null);
         UserService userService = new UserService(userRepository);
-        Assertions.assertNull(userService.findUserById(user.getId()));
+        //Optional<User>类是不会抛出null的，如果是Optional.Empty，那么get()得到的不是null，而是会抛错，说取不到值。
+        Assertions.assertFalse(userService.findUserById(user.getId()).isPresent());
+        //Assertions.assertNull(userService.findUserById(user.getId()).get());
     }
+
+    @Test
+    public void should_return_user_when_authentication_not_null() {
+        /*
+        这里没有使用模板
+mockito使用模板 ：
+ //mock creation
+ List mockedList = mock(List.class);
+
+ //using mock object
+ mockedList.add("one");
+ mockedList.clear();
+
+ //verification
+ verify(mockedList).add("one");
+ verify(mockedList).clear();
+         */
+        User user = User.builder().id(new BigInteger(String.valueOf(1111))).name("zly").password("10000000000").build();
+        Authentication authentication = mock(Authentication.class);
+        //下面这条语句把authentication存储到SecurityContextHolder中。
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        when(authentication.getPrincipal()).thenReturn(user);
+        UserService userService = new UserService(userRepository);
+        Assertions.assertEquals(user, userService.getCurUser());
+    }
+
+    @Test
+    public void should_return_null_when_authentication_is_null() {
+
+        User user = User.builder().id(new BigInteger(String.valueOf(1111))).name("zly").password("10000000000").build();
+        SecurityContext securityContext = mock(SecurityContext.class);
+        //下面这条语句把authentication存储到SecurityContextHolder中。
+        when(securityContext.getAuthentication()).thenReturn(null);
+        SecurityContextHolder.getContext().setAuthentication(securityContext.getAuthentication());
+        UserService userService = new UserService(userRepository);
+        Assertions.assertNull(userService.getCurUser());
+    }
+
 }
