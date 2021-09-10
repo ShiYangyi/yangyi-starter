@@ -7,9 +7,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 
 //默认情况下所有请求都需要认证。
+//启用Spring Security Web功能
 @EnableWebSecurity
+//声明为配置类
 @Configuration
 //WebMvcConfigurerAdapter这个类是用来配置restful api的一些信息，序列化和反序列化等。
 //WebSecurityConfigurerAdapter这个类才是用来配置spring security的一些信息。
@@ -53,7 +56,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 //由于JwtAuthenticationFilter被@Component修饰，所以这里就不要用new对象
                 //因为filetr是所有请求都会去访问的，如果不是要对所有请求都进行token的验证，那么就不应该把token是否存在的验证写在filter中，看filter和拦截器interceptor的区别。
-                .addFilter(new JwtAuthenticationFilter(authenticationManager(), userService));
+                .addFilter(new JwtAuthenticationFilter(authenticationManager(), userService))
+                .sessionManagement()//定制session策略
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);//让Spring Security不创建和使用session。
+
+        //下面语句用来disable session，是和token不同的另一种认证模式，SessionCreationPolicy.STATELESS无状态
+        //http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
         //下面方法用来自定义表单登陆
                 //.and().formLogin()//增加表单登陆
                 //.and().httpBasic();//增加Basic认证
