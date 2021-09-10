@@ -7,8 +7,7 @@ import com.example.yangyistarter.util.ResponseCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.CurrentSecurityContext;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
@@ -133,9 +132,13 @@ public class UserController {
         return principal.getName();
     }*/
 
+    //改用@AuthenticationPrincipal，参数为@AuthenticationPrincipal authentication，最开始debug为null，
+    // 因为调试到底层代码，进入if分支后，principle不为空，但if分支的另一个条件不满足，即当前类没有继承Principle类。所以参数写成如下几种形式都是可行的：
+    // 第一种：@AuthenticationPrincipal Principal principal
+    // 第二种：@AuthenticationPrincipal User user，因为User类继承Principal类
+    // 第三种：@AuthenticationPrincipal Authentication authentication，然后再让User类继承Authentication类
     @GetMapping("/messages")
-    public String getMessage(@CurrentSecurityContext(expression = "authentication")
-                                     Authentication authentication) {
-        return authentication.getName();
+    public String getMessage(@AuthenticationPrincipal User user) {
+        return user.getName();
     }
 }
