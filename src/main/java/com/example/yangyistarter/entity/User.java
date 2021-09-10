@@ -40,6 +40,7 @@ public class User implements UserDetails {
     }
 
     @Override
+    //重写的方法返回值和形参都不能改变
     public boolean isAccountNonExpired() {
         return true;
     }
