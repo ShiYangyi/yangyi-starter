@@ -7,6 +7,7 @@ import com.example.yangyistarter.util.ResponseCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
@@ -16,6 +17,8 @@ import javax.validation.Valid;
 @RequestMapping("/users")
 public class UserController {
 
+    //bCryptPasswordEncoder()方法带有Bean注解，注解用来在Spring应用上下文中声明PasswordEncoder bean。
+    // 那么对于bCryptPasswordEncoder()方法的任何调用都会被拦截，并且返回应用上下文中的bean实例。
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
@@ -100,5 +103,42 @@ public class UserController {
     public Object login(@RequestBody @Valid UserDTO userDTO) {
 
         return userService.login(userDTO);
+    }
+
+    /*@UserLoginToken//加上这个注解后，表示接口必须要登陆获取token后，在请求头加上token通过验证后才可以访问。
+    @GetMapping("/messages")
+    public Object getMessage(@CurrentUser User user) {
+        return user;
+    }*/
+
+    /*@GetMapping("/messages")
+    public Object getMessage(@AuthenticationPrincipal User user) {
+        return user;
+    }*/
+
+    //第一步：先检查接口是否可以访问成功
+    /*@GetMapping("/messages")
+    public LoginResponse getMessage() {
+
+        User curUser = userService.getCurUser();
+        LoginResponse loginResponse = new LoginResponse(User.builder().name(curUser.getName()).build());
+        return loginResponse;
+    }*/
+
+    /*@GetMapping("/messages")
+    //在这里，按照principal来获取用户信息获取不到，因为在程序里把用户信息填充到了Authentication，principal中没有填入任何东西
+    public String getMessage(@CurrentSecurityContext(expression = "authentication.principal")
+                                     Principal principal) {
+        return principal.getName();
+    }*/
+
+    //改用@AuthenticationPrincipal，参数为@AuthenticationPrincipal authentication，最开始debug为null，
+    // 因为调试到底层代码，进入if分支后，principle不为空，但if分支的另一个条件不满足，即当前类没有继承Principle类。所以参数写成如下几种形式都是可行的：
+    // 第一种：@AuthenticationPrincipal Principal principal
+    // 第二种：@AuthenticationPrincipal User user，因为User类继承Principal类
+    // 第三种：@AuthenticationPrincipal Authentication authentication，然后再让User类继承Authentication类
+    @GetMapping("/messages")
+    public String getMessage(@AuthenticationPrincipal User user) {
+        return user.getName();
     }
 }

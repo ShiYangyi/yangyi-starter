@@ -2,7 +2,6 @@ package com.example.yangyistarter.entity;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
 import java.math.BigInteger;
 
 class UserTest {
@@ -29,5 +28,33 @@ class UserTest {
         User user = User.builder().id((BigInteger.valueOf(2222L))).name("小明").build();
         user.setPassword("222222");
         Assertions.assertEquals("222222", user.getPassword());
+    }
+
+    @Test
+    public void should_return_true_when_call_isAccountNonExpired() {
+        User user = User.builder().id((BigInteger.valueOf(2222L))).name("小明").build();
+        Assertions.assertTrue(user.isAccountNonExpired());
+
+    }
+
+    @Test
+    public void should_return_true_when_call_isAccountNonLocked() {
+        User user = User.builder().id((BigInteger.valueOf(2222L))).name("小明").build();
+        Assertions.assertTrue(user.isAccountNonLocked());
+
+    }
+
+    @Test
+    public void should_return_true_when_call_isCredentialsNonExpired() {
+        User user = User.builder().id((BigInteger.valueOf(2222L))).name("小明").build();
+        Assertions.assertTrue(user.isCredentialsNonExpired());
+
+    }
+
+    @Test
+    public void should_return_true_when_call_isEnabled() {
+        User user = User.builder().id((BigInteger.valueOf(2222L))).name("小明").build();
+        Assertions.assertTrue(user.isEnabled());
+
     }
 }

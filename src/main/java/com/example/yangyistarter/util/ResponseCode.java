@@ -12,7 +12,8 @@ public enum ResponseCode {
     INVALID_REQUEST(10000, "invalid request"),
     SERVER_ERROR(10001, "server error"),
     USER_ALREADY_EXISTS(10002, "user already exists"),
-    USER_REGISTER_SUCCESS(10003, "user registered successful");
+    USER_REGISTER_SUCCESS(10003, "user registered successful"),
+    INVALID_USER_INFO(10004, "invalid user information");
 
     private static final Set<String> Response_CODE_VALUES = ImmutableSet.copyOf(
             //注意写法，把获取到的code组成set集合。
