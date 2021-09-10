@@ -6,8 +6,6 @@ import com.example.yangyistarter.entity.User;
 import com.example.yangyistarter.repository.UserRepository;
 import com.example.yangyistarter.util.ResponseCode;
 import com.example.yangyistarter.util.UserToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -68,7 +66,7 @@ public class UserService {
                 /*Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
                 String token = JWTLoginFilter.getToken(authentication);*/
                 loginResponse.setToken(token);
-                loginResponse.setUser(User.builder().name(userForBase.getName()).build());
+                loginResponse.setUser(UserDTO.builder().name(userForBase.getName()).build());
                 //loginResponse.setUser(userForBase);
                 loginResponse.setMessage("登陆成功");
             }
@@ -91,8 +89,8 @@ public class UserService {
         return userRepository.findById(userId);
     }
 
-    //获取当前登陆的用户
-    public User getCurUser() {
+    //获取当前登陆的用户，这个方法现在没有使用到
+    /*public User getCurUser() {
         User user = null;
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null) {
@@ -100,5 +98,5 @@ public class UserService {
             user = (User) authentication.getPrincipal();
         }
         return user;
-    }
+    }*/
 }
