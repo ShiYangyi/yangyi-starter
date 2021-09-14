@@ -5,6 +5,7 @@ import com.example.yangyistarter.entity.LoginResponse;
 import com.example.yangyistarter.entity.User;
 import com.example.yangyistarter.repository.UserRepository;
 import com.example.yangyistarter.util.ResponseCode;
+import com.example.yangyistarter.util.SecurityConstants;
 import com.example.yangyistarter.util.UserToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -61,7 +62,9 @@ public class UserService {
             //if (!userForBase.getPassword().equals(bCryptPasswordEncoder.encode(user.getPassword()))) {
                 loginResponse.setMessage("登录失败,密码错误");
             } else {
-                UserToken userToken = new UserToken(userForBase.getId().toString(), userForBase.getPassword(), 14400);
+                //过期时间100分钟
+                UserToken userToken = new UserToken(userForBase.getId().toString(), SecurityConstants.SECRET, SecurityConstants.EXPIRES);
+                //UserToken userToken = new UserToken(userForBase.getId().toString(), userForBase.getPassword(), 100);
                 String token = userToken.getToken();
                 /*Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
                 String token = JWTLoginFilter.getToken(authentication);*/
