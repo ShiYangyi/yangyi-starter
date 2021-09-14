@@ -6,7 +6,6 @@ import com.example.yangyistarter.service.UserService;
 import com.example.yangyistarter.util.ResponseCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -19,10 +18,11 @@ public class UserController {
 
     //bCryptPasswordEncoder()方法带有Bean注解，注解用来在Spring应用上下文中声明PasswordEncoder bean。
     // 那么对于bCryptPasswordEncoder()方法的任何调用都会被拦截，并且返回应用上下文中的bean实例。
-    @Bean
+    /*@Bean注解的配置不要放在这里，不属于控制层，应该写一个配置类，然后所有的这样的@Bean的配置都可以写在配置类*/
+    /*@Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
-    }
+    }*/
 
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;

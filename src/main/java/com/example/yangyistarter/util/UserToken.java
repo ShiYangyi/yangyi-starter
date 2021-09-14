@@ -2,29 +2,30 @@ package com.example.yangyistarter.util;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import lombok.AllArgsConstructor;
 
 import java.nio.charset.Charset;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
-@Component
+//每次都是new来创建实例对象，又不是全局唯一，所以不应该添加@Component注解，并且类里面的构造器方法也是多余的，每次使用该类时都是通过new对象。
+//@Component
+@AllArgsConstructor
 public class UserToken {
     //@Getter
     private String userId;
     private String password;
     // int minutes
     private int expires;
-    public UserToken(@Value("708ccc12-bd0c") String userId,
+    /*public UserToken(@Value("708") String userId,
                                     @Value("SecretKeyToGenJWTs") String password,
-                                    //expires值为14400，单位为分钟
-                                    @Value("14400") int expires) {
+                                    //expires值为1，单位为分钟
+                                    @Value("1") int expires) {
         this.userId = userId;
         this.password = password;
         this.expires = expires;
-    }
+    }*/
 
     public String getToken() {
         //当发现解码后的token与本地生成的token不匹配时候，就应该把解码部分的代码与获取token的代码写在一起，
