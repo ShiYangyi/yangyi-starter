@@ -8,4 +8,5 @@ public class SecurityConstants {
     }
     public static final String SECRET = "MyJwtSecret";
     public static final String TOKEN_PREFIX = "Bearer ";
+    public static final int EXPIRES = 100;
 }
