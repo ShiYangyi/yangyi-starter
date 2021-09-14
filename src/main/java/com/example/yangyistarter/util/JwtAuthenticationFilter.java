@@ -55,7 +55,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain chain) throws IOException, ServletException {
-        // 从header中取出Authorization，即token
+        // 从请求的header中取出token，token对应的header名字为Authorization,HttpHeaders.AUTHORIZATION=Authorization。
         String token = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (token != null) {
             // 去除prefix后，对JWToken进行解析
