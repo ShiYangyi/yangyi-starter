@@ -41,7 +41,9 @@ public class User implements UserDetails, Principal {
     }
 
     @Override
-    //重写的方法返回值和形参都不能改变
+    //重写的方法返回值和形参都不能改变，这些方法没有使用到，与token无关，与token设置的过期时间也无关。
+    //UserDetail这个类就是用来存储权限相关信息的，那几个重写的属于UserDetail类中的方法，
+    // 为了不让其影响现有程序，所以让它们全部返回true。
     public boolean isAccountNonExpired() {
         return true;
     }
