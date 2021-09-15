@@ -21,12 +21,13 @@ public class UserDTO {
     @Length(max = 20, message = "密码不能超过20个字符")
     @Length(min = 6, message = "密码不能少于6个字符")
     private String password;
+    private String role;
 
     @Override
     public String toString() {
         //Request{name='syy', password='1'},这是原来toString()的格式
         //{"name": "po", "password": "0"}，重写后的格式
-        String result = "{\"name\": \"" + name + '\"' + ", \"password\": \"" + password + '\"' + '}';
+        String result = "{\"name\": \"" + name + '\"' + ", \"password\": \"" + password + '\"' + ", \"role\": \"" + role + '\"' + '}';
         return result;
     }
 }
