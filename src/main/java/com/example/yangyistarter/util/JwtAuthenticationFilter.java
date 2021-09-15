@@ -6,6 +6,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
@@ -71,7 +72,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
             if (user.isPresent()) {
                 PreAuthenticatedAuthenticationToken authenticationToken = new
                         //下面存进去的第一个参数，存进去user.get()，不要存进去Optional类。
-                        PreAuthenticatedAuthenticationToken(user.get(), null, null);
+                        PreAuthenticatedAuthenticationToken(user.get(), null, AuthorityUtils.commaSeparatedStringToAuthorityList(user.get().getRole()));
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             } else {
                 // 如果用户不存在则返回401错误,Status code (401) indicating that the request requires HTTP authentication
