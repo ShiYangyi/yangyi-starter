@@ -30,7 +30,8 @@ public class UserDTOTest {
         userDTOBuilder.id((BigInteger.valueOf(2222L)));
         userDTOBuilder.name("小明");
         userDTOBuilder.password("1111111");
-        Assertions.assertEquals("UserDTO.UserDTOBuilder(id=2222, name=小明, password=1111111)", userDTOBuilder.toString());
+        userDTOBuilder.role("ROLE_USER");
+        Assertions.assertEquals("UserDTO.UserDTOBuilder(id=2222, name=小明, password=1111111, role=ROLE_USER)", userDTOBuilder.toString());
 
     }
 }
