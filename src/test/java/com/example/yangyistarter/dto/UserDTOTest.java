@@ -24,6 +24,14 @@ public class UserDTOTest {
     }
 
     @Test
+    public void should_return_role_ROLE_MANAGER_when_set_role_ROLE_MANAGER() {
+
+        UserDTO userDTO = UserDTO.builder().id((BigInteger.valueOf(2222L))).name("syyy").password("11111111").build();
+        userDTO.setRole("ROLE_MANAGER");
+        Assertions.assertEquals("ROLE_MANAGER", userDTO.getRole());
+    }
+
+    @Test
     public void should_return_string_when_call_toString() {
 
         UserDTO.UserDTOBuilder userDTOBuilder = new UserDTO.UserDTOBuilder();
