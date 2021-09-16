@@ -23,11 +23,4 @@ public class UserDTO {
     private String password;
     private String role;
 
-    @Override
-    public String toString() {
-        //Request{name='syy', password='1'},这是原来toString()的格式
-        //{"name": "po", "password": "0"}，重写后的格式
-        String result = "{\"name\": \"" + name + '\"' + ", \"password\": \"" + password + '\"' + ", \"role\": \"" + role + '\"' + '}';
-        return result;
-    }
 }
