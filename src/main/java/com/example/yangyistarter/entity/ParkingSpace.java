@@ -3,6 +3,7 @@ package com.example.yangyistarter.entity;
 import javax.persistence.*;
 import java.math.BigInteger;
 
+@Entity
 @Table(name = "parking_space")
 public class ParkingSpace {
     @Id
