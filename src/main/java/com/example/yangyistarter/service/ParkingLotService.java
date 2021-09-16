@@ -26,9 +26,4 @@ public class ParkingLotService {
         return ResponseCode.PARKINGLOT_ADD_SUCCESS;
     }
 
-
-
-
-
-
 }
