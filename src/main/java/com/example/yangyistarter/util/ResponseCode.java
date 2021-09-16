@@ -13,7 +13,10 @@ public enum ResponseCode {
     SERVER_ERROR(10001, "server error"),
     USER_ALREADY_EXISTS(10002, "user already exists"),
     USER_REGISTER_SUCCESS(10003, "user registered successful"),
-    INVALID_USER_INFO(10004, "invalid user information");
+    INVALID_USER_INFO(10004, "invalid user information"),
+    PARKINGLOT_ADD_SUCCESS(10005, "parking lot add success"),
+    ROLE_IS_NOT_MANAGER(10006, "role is not manager"),
+    PARKINGLOT_ALREADY_EXISTS(10007, "parking lot already exists");
 
     private static final Set<String> Response_CODE_VALUES = ImmutableSet.copyOf(
             //注意写法，把获取到的code组成set集合。

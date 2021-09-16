@@ -87,6 +87,16 @@ public class UserService {
         return null;
     }
 
+    public User findUserByName(String username) {
+
+        for (User curUser : userRepository.findAll()) {
+            if (curUser.getName().equals(username)) {
+                return curUser;
+            }
+        }
+        return null;
+    }
+
     public Optional<User> findUserById(BigInteger userId) {
         //不要使用getById()，改用findById()
         return userRepository.findById(userId);

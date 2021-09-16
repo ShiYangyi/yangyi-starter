@@ -24,13 +24,22 @@ public class UserDTOTest {
     }
 
     @Test
+    public void should_return_role_ROLE_MANAGER_when_set_role_ROLE_MANAGER() {
+
+        UserDTO userDTO = UserDTO.builder().id((BigInteger.valueOf(2222L))).name("syyy").password("11111111").build();
+        userDTO.setRole("ROLE_MANAGER");
+        Assertions.assertEquals("ROLE_MANAGER", userDTO.getRole());
+    }
+
+    @Test
     public void should_return_string_when_call_toString() {
 
         UserDTO.UserDTOBuilder userDTOBuilder = new UserDTO.UserDTOBuilder();
         userDTOBuilder.id((BigInteger.valueOf(2222L)));
         userDTOBuilder.name("小明");
         userDTOBuilder.password("1111111");
-        Assertions.assertEquals("UserDTO.UserDTOBuilder(id=2222, name=小明, password=1111111)", userDTOBuilder.toString());
+        userDTOBuilder.role("ROLE_USER");
+        Assertions.assertEquals("UserDTO.UserDTOBuilder(id=2222, name=小明, password=1111111, role=ROLE_USER)", userDTOBuilder.toString());
 
     }
 }

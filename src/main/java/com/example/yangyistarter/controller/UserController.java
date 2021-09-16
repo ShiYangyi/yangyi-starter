@@ -33,7 +33,7 @@ public class UserController {
     //@Validated
     public ResponseCode register(@RequestBody @Valid UserDTO userDTO) {
         userDTO.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
-        return userService.register(User.builder().id(userDTO.getId()).name(userDTO.getName()).password(userDTO.getPassword()).build());
+        return userService.register(User.builder().id(userDTO.getId()).name(userDTO.getName()).password(userDTO.getPassword()).role(userDTO.getRole()).build());
     }
 
     /*

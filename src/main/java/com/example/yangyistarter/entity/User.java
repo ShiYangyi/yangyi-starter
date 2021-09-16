@@ -25,6 +25,7 @@ public class User implements UserDetails, Principal {
     @Column(name = "username")
     private String name;
     private String password;
+    private String role;
 
     public static UserBuilder builder() {
         return new UserBuilder();
@@ -67,6 +68,7 @@ public class User implements UserDetails, Principal {
         private BigInteger id;
         private String name;
         private String password;
+        private String role;
 
         UserBuilder() {
         }
@@ -86,12 +88,17 @@ public class User implements UserDetails, Principal {
             return this;
         }
 
+        public UserBuilder role(String role) {
+            this.role = role;
+            return this;
+        }
+
         public User build() {
-            return new User(id, name, password);
+            return new User(id, name, password, role);
         }
 
         /*public String toString() {
-            return "User.UserBuilder(id=" + this.id + ", name=" + this.name + ", password=" + this.password + ")";
+            return "User.UserBuilder(id=" + this.id + ", name=" + this.name + ", password=" + this.password + ", role=" + this.role + ")";
         }*/
     }
 }

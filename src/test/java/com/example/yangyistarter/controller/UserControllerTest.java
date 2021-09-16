@@ -2,6 +2,7 @@ package com.example.yangyistarter.controller;
 
 import com.example.yangyistarter.dto.UserDTO;
 import com.example.yangyistarter.entity.User;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -26,13 +27,14 @@ public class UserControllerTest {
     private MockMvc mockMvc;
 
     //User curUser = User.builder().name("po").password("0").build();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test
     public void should_return_status_200_when_register() throws Exception {
 
         //String curJson = "{\"name\": \"po00\", \"password\": \"000000\" }";
-        UserDTO user = UserDTO.builder().id(BigInteger.valueOf(1111L)).name("poo").password("000000").build();
-        String curJson = user.toString();
+        UserDTO user = UserDTO.builder().id(BigInteger.valueOf(1111L)).name("poo").password("000000").role("ROLE_USER").build();
+        String curJson = MAPPER.writeValueAsString(user);
         /*Request user = Request.builder().name("poo").password("000000").build();
         String curJson = user.toString();*/
 
@@ -52,8 +54,12 @@ public class UserControllerTest {
         //Request{name='syy', password='1'}
         //String curJson = "{\"name\": \"po\", \"password\": \"0\" }";
         //Request user = Request.builder().name("poo").password("000000").build();
+        //测试这里应该不需要是数据库中真实的数据对吧，不需要
+        //之前跑测试在接口打断点，不能进入的原因是返回了400，返回了400是不会进入接口的，直接就被拦截了。最后在debug的日志中发现了是字符串解析时出了问题，
+        // 重写的toString()方法漏写了一个双引号，由于下面.content()中参数应该传入json,json是一种字符串，但不是所有的字符串都是json，
+        // 这里最好使用类转json的工具，这里用了writeValueAsString(),使用了ObjectMapper类构造了final static的对象。
         UserDTO user = UserDTO.builder().id(BigInteger.valueOf(1111L)).name("poo").password("000000").build();
-        String curJson = user.toString();
+        String curJson = MAPPER.writeValueAsString(user);
 
         //验证controller监听HTTP请求,调用MockMvc的perform()并提供要测试的URL
         MvcResult mvcResult = mockMvc.perform(post("/users/login")

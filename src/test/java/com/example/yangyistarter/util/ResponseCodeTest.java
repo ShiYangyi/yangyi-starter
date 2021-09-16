@@ -23,6 +23,6 @@ public class ResponseCodeTest {
 
         //final Set<String> Response_CODE_VALUES = Stream.of("10000").collect(Collectors.toSet());
         //测试ResponseCode中的contains()，只需要考虑该方法的入参和出参，不需要考虑该方法内部的实现。所以不需要对Response_CODE_VALUES赋值。
-        Assertions.assertEquals(false, ResponseCode.contains("10006"));
+        Assertions.assertEquals(false, ResponseCode.contains("11006"));
     }
 }

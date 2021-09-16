@@ -118,7 +118,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void should_return_user_when_given_valid_username() {
+    public void should_return_user_when_given_valid_user() {
 
         UserDTO userDTO = UserDTO.builder().id(new BigInteger(String.valueOf(1111))).name("zly").password("1").build();
         String savedPassword = "$2a$10$lsWFF4FHNj2Y3dyKv1iCf.4pMytV4dPgfoVmdX18w3V3Q2lbW1/ae";//对应密码1
@@ -130,7 +130,16 @@ public class UserServiceTest {
     }
 
     @Test
-    public void should_return_null_when_given_error_username() {
+    public void should_return_null_when_given_invalid_user() {
+
+        User user = User.builder().id(new BigInteger(String.valueOf(1111))).name("zly").password("1").build();
+        when(userRepository.findAll()).thenReturn(new ArrayList<User>(){});
+        UserService userService = new UserService(userRepository);
+        Assertions.assertNull(userService.findUserByName(user));
+    }
+
+    @Test
+    public void should_return_null_when_given_mismatch_user() {
 
         UserDTO userDTO = UserDTO.builder().id(new BigInteger(String.valueOf(1111))).name("po").password("1").build();
         String savedPassword = "$2a$10$lsWFF4FHNj2Y3dyKv1iCf.4pMytV4dPgfoVmdX18w3V3Q2lbW1/ae";//对应密码1
@@ -141,12 +150,35 @@ public class UserServiceTest {
     }
 
     @Test
+    public void should_return_user_when_given_valid_username() {
+
+        UserDTO userDTO = UserDTO.builder().id(new BigInteger(String.valueOf(1111))).name("zly").password("1").build();
+        String savedPassword = "$2a$10$lsWFF4FHNj2Y3dyKv1iCf.4pMytV4dPgfoVmdX18w3V3Q2lbW1/ae";//对应密码1
+        User user = User.builder().id(new BigInteger(String.valueOf(1111))).name("zly").password(savedPassword).build();
+        when(userRepository.findAll()).thenReturn(Collections.singletonList(user));
+        UserService userService = new UserService(userRepository);
+        Assertions.assertEquals(user, userService.findUserByName(user.getUsername()));
+
+    }
+
+    @Test
     public void should_return_null_when_given_invalid_username() {
 
         User user = User.builder().id(new BigInteger(String.valueOf(1111))).name("zly").password("1").build();
         when(userRepository.findAll()).thenReturn(new ArrayList<User>(){});
         UserService userService = new UserService(userRepository);
-        Assertions.assertNull(userService.findUserByName(user));
+        Assertions.assertNull(userService.findUserByName(user.getUsername()));
+    }
+
+    @Test
+    public void should_return_null_when_given_mismatch_username() {
+
+        UserDTO userDTO = UserDTO.builder().id(new BigInteger(String.valueOf(1111))).name("po").password("1").build();
+        String savedPassword = "$2a$10$lsWFF4FHNj2Y3dyKv1iCf.4pMytV4dPgfoVmdX18w3V3Q2lbW1/ae";//对应密码1
+        User user = User.builder().id(new BigInteger(String.valueOf(1111))).name("po").password(savedPassword).build();
+        when(userRepository.findAll()).thenReturn(Collections.singletonList(user));
+        UserService userService = new UserService(userRepository);
+        Assertions.assertNull(userService.findUserByName(curUser.getUsername()));
     }
 
     @Test
