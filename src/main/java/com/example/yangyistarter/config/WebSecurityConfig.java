@@ -4,6 +4,7 @@ import com.example.yangyistarter.service.UserService;
 import com.example.yangyistarter.util.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -14,6 +15,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 @EnableWebSecurity
 //声明为配置类
 @Configuration
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 //WebMvcConfigurerAdapter这个类是用来配置restful api的一些信息，序列化和反序列化等。
 //WebSecurityConfigurerAdapter这个类才是用来配置spring security的一些信息。
 //Spring Security为配置用户存储提供的方案：
