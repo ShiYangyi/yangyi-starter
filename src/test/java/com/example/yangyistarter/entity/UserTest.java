@@ -31,6 +31,14 @@ class UserTest {
     }
 
     @Test
+    public void should_return_role_ROLE_USER_when_set_role_ROLE_USER() {
+
+        User user = User.builder().id((BigInteger.valueOf(2222L))).name("小明").password("222222").build();
+        user.setRole("ROLE_USER");
+        Assertions.assertEquals("ROLE_USER", user.getRole());
+    }
+
+    @Test
     public void should_return_true_when_call_isAccountNonExpired() {
         User user = User.builder().id((BigInteger.valueOf(2222L))).name("小明").build();
         Assertions.assertTrue(user.isAccountNonExpired());
