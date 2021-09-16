@@ -1,6 +1,7 @@
 package com.example.yangyistarter.controller;
 
 import com.example.yangyistarter.entity.User;
+import com.example.yangyistarter.service.ManagerService;
 import com.example.yangyistarter.service.UserService;
 import com.example.yangyistarter.util.ResponseCode;
 import lombok.RequiredArgsConstructor;
@@ -13,10 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/assistant")
-public class AssistantController {
+@RequestMapping("/manager")
+public class ManagerController {
     @Autowired
-    UserService userService;
+    ManagerService managerService;
 
     @PreAuthorize("hasRole('ROLE_MANAGER')")
     @PostMapping("/add")
@@ -25,10 +26,8 @@ public class AssistantController {
     // json需要转换成对象，这些数据流的转换工作都是框架去实现的，在实现自己写的方法之前，
     // 框架做了这些工作，当在方法中打了断点，在执行到return语句时，再单步调试就会进入到框架的代理方法。
     // 代理方法相当于是在自己的实现方法外面包裹了一层。
-    public ResponseCode addAssistant(@RequestBody User user) {
-        if("ROLE_ASSISTANT".equals(user.getRole())){
-            return userService.register(user);
-        }
-        return ResponseCode.INVALID_REQUEST;
+    public ResponseCode addUser(@RequestBody User user) {
+
+        return managerService.addUser(user);
     }
 }
