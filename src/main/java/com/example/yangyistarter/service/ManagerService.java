@@ -7,8 +7,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ManagerService {
+    UserService userService;
     UserRepository userRepository;
-    public ManagerService(UserRepository userRepository) {
+    public ManagerService(UserService userService, UserRepository userRepository) {
+        this.userService = userService;
         this.userRepository = userRepository;
     }
 
@@ -29,10 +31,13 @@ public class ManagerService {
     public boolean verifyDuplicate(User user) {
         //如果数据库中数据很多，findAll()方法的性能不好。由于name具有唯一性，这里可以改用findByName()，简化代码。
 
-        for (User curUser : userRepository.findAll()) {
+        /*for (User curUser : userRepository.findAll()) {
             if (curUser.getName().equals(user.getName())) {
                 return true;
             }
+        }*/
+        if(userService.findUserByName(user.getUsername()) != null) {
+            return true;
         }
         return false;
     }
