@@ -25,4 +25,10 @@ public class ParkingLotController {
         return parkingLotService.addParkingLot(parkingLot);
     }
 
+    @PreAuthorize("hasRole('ROLE_MANAGER')")
+    @PostMapping("/delete")
+    //测试这个接口时需要带上token，否则是无法验证用户身份的
+    public ResponseCode deleteParkingLot(@RequestBody ParkingLot parkingLot) {
+        return parkingLotService.deleteParkingLot(parkingLot);
+    }
 }
