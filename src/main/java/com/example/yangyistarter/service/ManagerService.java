@@ -43,4 +43,15 @@ public class ManagerService {
         return false;
     }
 
+    public ResponseCode deleteUser(String name) {
+        User user = userService.findUserByName(name);
+        if(user != null) {
+            if ("ROLE_CLEVER_ASSISTANT".equals(user.getRole()) || "ROLE_STUPID_ASSISTANT".equals(user.getRole())) {
+                userRepository.delete(user);
+                return ResponseCode.USER_DELETE_SUCCESS;
+            }
+            return ResponseCode.INVALID_REQUEST;
+        }
+        return ResponseCode.USER_NOT_EXIST;
+    }
 }
