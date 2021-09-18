@@ -16,6 +16,7 @@ import java.math.BigInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
@@ -24,7 +25,7 @@ public class ParkingLotControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    ParkingLot parkingLot = ParkingLot.builder().id(BigInteger.valueOf(1111L)).name("parking lot 1").username("yyyyy").build();
+    ParkingLot parkingLot = ParkingLot.builder().id(BigInteger.valueOf(1111L)).name("parking_lot_1").username("yyyyy").build();
     String curJson = parkingLot.toString();
 
     @Test
@@ -84,9 +85,8 @@ public class ParkingLotControllerTest {
     public void should_return_status_200_when_manager_delete_parking_lot() throws Exception {
 
         //验证controller监听HTTP请求,调用MockMvc的perform()并提供要测试的URL
-        MvcResult mvcResult = mockMvc.perform(post("/parkinglot/delete")
+        MvcResult mvcResult = mockMvc.perform(get("/parkinglot/delete/parking_lot_1")
                         //.content(objectMapper.writeValueAsString(curUser))
-                        .content(curJson)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
         assertThat(mvcResult.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
@@ -97,9 +97,8 @@ public class ParkingLotControllerTest {
     @WithMockUser(roles = {"CLEVER_ASSISTANT"})
     public void should_return_status_403_when_clever_assistant_delete_parking_lot() throws Exception {
 
-        MvcResult mvcResult = mockMvc.perform(post("/parkinglot/delete")
+        MvcResult mvcResult = mockMvc.perform(get("/parkinglot/delete/parking_lot_1")
                         //.content(objectMapper.writeValueAsString(curUser))
-                        .content(curJson)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
         assertThat(mvcResult.getResponse().getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
@@ -110,9 +109,8 @@ public class ParkingLotControllerTest {
     @WithMockUser(roles = {"STUPID_ASSISTANT"})
     public void should_return_status_403_when_stupid_assistant_delete_parking_lot() throws Exception {
 
-        MvcResult mvcResult = mockMvc.perform(post("/parkinglot/delete")
+        MvcResult mvcResult = mockMvc.perform(get("/parkinglot/delete/parking_lot_1")
                         //.content(objectMapper.writeValueAsString(curUser))
-                        .content(curJson)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
         assertThat(mvcResult.getResponse().getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
@@ -123,9 +121,8 @@ public class ParkingLotControllerTest {
     @WithMockUser()
     public void should_return_status_403_when_user_delete_parking_lot() throws Exception {
 
-        MvcResult mvcResult = mockMvc.perform(post("/parkinglot/delete")
+        MvcResult mvcResult = mockMvc.perform(get("/parkinglot/delete/parking_lot_1")
                         //.content(objectMapper.writeValueAsString(curUser))
-                        .content(curJson)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
         assertThat(mvcResult.getResponse().getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
