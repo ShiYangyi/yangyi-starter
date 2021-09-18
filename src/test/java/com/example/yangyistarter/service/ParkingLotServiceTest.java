@@ -70,8 +70,8 @@ public class ParkingLotServiceTest {
         when(parkingLot.getName()).thenReturn("parking lot 1");
         when(parkingLotRepository.findAll()).thenReturn(Collections.singletonList(parkingLot));
         ParkingLotService parkingLotService = new ParkingLotService(parkingLotRepository, userService);
-        Assertions.assertEquals(10008, parkingLotService.deleteParkingLot(parkingLot).getCode());
-        Assertions.assertEquals("parking lot delete success", parkingLotService.deleteParkingLot(parkingLot).getMessage());
+        Assertions.assertEquals(10008, parkingLotService.deleteParkingLot(parkingLot.getName()).getCode());
+        Assertions.assertEquals("parking lot delete success", parkingLotService.deleteParkingLot(parkingLot.getName()).getMessage());
     }
 
     @Test
@@ -82,8 +82,8 @@ public class ParkingLotServiceTest {
         when(parkingLot.getName()).thenReturn("parking lot 2");
         when(parkingLotRepository.findAll()).thenReturn(Collections.singletonList(parkingLot));
         ParkingLotService parkingLotService = new ParkingLotService(parkingLotRepository, userService);
-        Assertions.assertEquals(10009, parkingLotService.deleteParkingLot(curParkingLot).getCode());
-        Assertions.assertEquals("parking lot not exist", parkingLotService.deleteParkingLot(curParkingLot).getMessage());
+        Assertions.assertEquals(10009, parkingLotService.deleteParkingLot(curParkingLot.getName()).getCode());
+        Assertions.assertEquals("parking lot not exist", parkingLotService.deleteParkingLot(curParkingLot.getName()).getMessage());
     }
 
     @Test
@@ -92,8 +92,8 @@ public class ParkingLotServiceTest {
         when(parkingLot.getName()).thenReturn("parking lot 1");
         when(parkingLotRepository.findAll()).thenReturn(new ArrayList<>());
         ParkingLotService parkingLotService = new ParkingLotService(parkingLotRepository, userService);
-        Assertions.assertEquals(10009, parkingLotService.deleteParkingLot(parkingLot).getCode());
-        Assertions.assertEquals("parking lot not exist", parkingLotService.deleteParkingLot(parkingLot).getMessage());
+        Assertions.assertEquals(10009, parkingLotService.deleteParkingLot(parkingLot.getName()).getCode());
+        Assertions.assertEquals("parking lot not exist", parkingLotService.deleteParkingLot(parkingLot.getName()).getMessage());
     }
 
 }
