@@ -24,14 +24,24 @@ public class UserController {
         return new BCryptPasswordEncoder();
     }*/
 
+    //用@Autowired不好写单元测试
     @Autowired
-    BCryptPasswordEncoder bCryptPasswordEncoder;
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
     @Autowired
-    UserService userService;
+    private UserService userService;
 
+    /*public UserController(BCryptPasswordEncoder bCryptPasswordEncoder, UserService userService) {
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.userService = userService;
+    }*/
+
+    //什么角色都可以访问这个接口，只是这个接口只有注册普通用户角色的用户才会注册成功
     @PostMapping("/register")
     //@Validated
     public ResponseCode register(@RequestBody @Valid UserDTO userDTO) {
+        if(!"ROLE_USER".equals(userDTO.getRole())) {
+            return ResponseCode.INVALID_REQUEST;
+        }
         userDTO.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
         return userService.register(User.builder().id(userDTO.getId()).name(userDTO.getName()).password(userDTO.getPassword()).role(userDTO.getRole()).build());
     }
