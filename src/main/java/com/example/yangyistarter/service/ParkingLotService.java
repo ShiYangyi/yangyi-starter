@@ -26,4 +26,13 @@ public class ParkingLotService {
         return ResponseCode.PARKINGLOT_ADD_SUCCESS;
     }
 
+    public ResponseCode deleteParkingLot(String name) {
+        for (ParkingLot curParkingLot : parkingLotRepository.findAll()) {
+            if (curParkingLot.getName().equals(name)) {
+                parkingLotRepository.delete(curParkingLot);
+                return ResponseCode.PARKINGLOT_DELETE_SUCCESS;
+            }
+        }
+        return ResponseCode.PARKINGLOT_NOT_EXIST;
+    }
 }

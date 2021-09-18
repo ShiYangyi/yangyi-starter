@@ -21,9 +21,6 @@ public class ParkingLotServiceTest {
     ParkingLotRepository parkingLotRepository = mock(ParkingLotRepository.class);
     UserService userService = mock(UserService.class);
     User manager = mock(User.class);
-    User assistant = mock(User.class);
-    User user = mock(User.class);
-
     ParkingLot parkingLot = ParkingLot.builder().id(BigInteger.valueOf(1111L)).name("parking lot 1").username("yyyyy").build();
 
     @Test
@@ -43,7 +40,6 @@ public class ParkingLotServiceTest {
         ParkingLotService parkingLotService = new ParkingLotService(parkingLotRepository, userService);
         Assertions.assertEquals(10007, parkingLotService.addParkingLot(parkingLot).getCode());
         Assertions.assertEquals("parking lot already exists", parkingLotService.addParkingLot(parkingLot).getMessage());
-
     }
 
     @Test
@@ -56,7 +52,6 @@ public class ParkingLotServiceTest {
         ParkingLotService parkingLotService = new ParkingLotService(parkingLotRepository, userService);
         Assertions.assertEquals(10005, parkingLotService.addParkingLot(curParkingLot).getCode());
         Assertions.assertEquals("parking lot add success", parkingLotService.addParkingLot(curParkingLot).getMessage());
-
     }
 
     @Test
@@ -67,7 +62,38 @@ public class ParkingLotServiceTest {
         ParkingLotService parkingLotService = new ParkingLotService(parkingLotRepository, userService);
         Assertions.assertEquals(10005, parkingLotService.addParkingLot(parkingLot).getCode());
         Assertions.assertEquals("parking lot add success", parkingLotService.addParkingLot(parkingLot).getMessage());
+    }
 
+    @Test
+    public void should_delete_parking_lot_when_parking_lot_exist() {
+        ParkingLot parkingLot = mock(ParkingLot.class);
+        when(parkingLot.getName()).thenReturn("parking lot 1");
+        when(parkingLotRepository.findAll()).thenReturn(Collections.singletonList(parkingLot));
+        ParkingLotService parkingLotService = new ParkingLotService(parkingLotRepository, userService);
+        Assertions.assertEquals(10008, parkingLotService.deleteParkingLot(parkingLot.getName()).getCode());
+        Assertions.assertEquals("parking lot delete success", parkingLotService.deleteParkingLot(parkingLot.getName()).getMessage());
+    }
+
+    @Test
+    public void should_return_error_message_when_delete_different_parking_lot_name() {
+        ParkingLot parkingLot = mock(ParkingLot.class);
+        when(parkingLot.getName()).thenReturn("parking lot 1");
+        ParkingLot curParkingLot = mock(ParkingLot.class);
+        when(parkingLot.getName()).thenReturn("parking lot 2");
+        when(parkingLotRepository.findAll()).thenReturn(Collections.singletonList(parkingLot));
+        ParkingLotService parkingLotService = new ParkingLotService(parkingLotRepository, userService);
+        Assertions.assertEquals(10009, parkingLotService.deleteParkingLot(curParkingLot.getName()).getCode());
+        Assertions.assertEquals("parking lot not exist", parkingLotService.deleteParkingLot(curParkingLot.getName()).getMessage());
+    }
+
+    @Test
+    public void should_delete_parking_lot_when_delete_parking_lot() {
+        ParkingLot parkingLot = mock(ParkingLot.class);
+        when(parkingLot.getName()).thenReturn("parking lot 1");
+        when(parkingLotRepository.findAll()).thenReturn(new ArrayList<>());
+        ParkingLotService parkingLotService = new ParkingLotService(parkingLotRepository, userService);
+        Assertions.assertEquals(10009, parkingLotService.deleteParkingLot(parkingLot.getName()).getCode());
+        Assertions.assertEquals("parking lot not exist", parkingLotService.deleteParkingLot(parkingLot.getName()).getMessage());
     }
 
 }

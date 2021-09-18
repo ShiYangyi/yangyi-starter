@@ -6,10 +6,7 @@ import com.example.yangyistarter.util.ResponseCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,4 +22,10 @@ public class ParkingLotController {
         return parkingLotService.addParkingLot(parkingLot);
     }
 
+    @PreAuthorize("hasRole('ROLE_MANAGER')")
+    @GetMapping("/delete/{name}")
+    //测试这个接口时需要带上token，否则是无法验证用户身份的，传参不应该为ParkingLot对象，应该是String类型的名字
+    public ResponseCode deleteParkingLot(@PathVariable String name) {
+        return parkingLotService.deleteParkingLot(name);
+    }
 }
