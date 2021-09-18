@@ -2,11 +2,11 @@ package com.example.yangyistarter.controller;
 
 import com.example.yangyistarter.entity.User;
 import com.example.yangyistarter.service.ManagerService;
-import com.example.yangyistarter.service.UserService;
 import com.example.yangyistarter.util.ResponseCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class ManagerController {
     @Autowired
     ManagerService managerService;
+    @Autowired
+    BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @PreAuthorize("hasRole('ROLE_MANAGER')")
     @PostMapping("/add")
@@ -27,7 +29,7 @@ public class ManagerController {
     // 框架做了这些工作，当在方法中打了断点，在执行到return语句时，再单步调试就会进入到框架的代理方法。
     // 代理方法相当于是在自己的实现方法外面包裹了一层。
     public ResponseCode addUser(@RequestBody User user) {
-
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         return managerService.addUser(user);
     }
 }

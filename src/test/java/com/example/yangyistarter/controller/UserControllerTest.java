@@ -2,7 +2,9 @@ package com.example.yangyistarter.controller;
 
 import com.example.yangyistarter.dto.UserDTO;
 import com.example.yangyistarter.entity.User;
+import com.example.yangyistarter.util.ResponseCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -15,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import java.math.BigInteger;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -138,5 +141,29 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
                 )
                 .andReturn();
         assertThat(getMessagesResult.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
+    }
+
+    @Test
+    public void should_return_invalid_request_when_register_manager() {
+        UserDTO userDTO = mock(UserDTO.class);
+        when(userDTO.getRole()).thenReturn("ROLE_MANAGER");
+        UserController userController = new UserController();
+        Assertions.assertEquals(ResponseCode.INVALID_REQUEST, userController.register(userDTO));
+    }
+
+    @Test
+    public void should_return_invalid_request_when_register_clever_assistant() {
+        UserDTO userDTO = mock(UserDTO.class);
+        when(userDTO.getRole()).thenReturn("ROLE_CLEVER_ASSISTANT");
+        UserController userController = new UserController();
+        Assertions.assertEquals(ResponseCode.INVALID_REQUEST, userController.register(userDTO));
+    }
+
+    @Test
+    public void should_return_invalid_request_when_register_stupid_assistant() {
+        UserDTO userDTO = mock(UserDTO.class);
+        when(userDTO.getRole()).thenReturn("ROLE_STUPID_ASSISTANT");
+        UserController userController = new UserController();
+        Assertions.assertEquals(ResponseCode.INVALID_REQUEST, userController.register(userDTO));
     }
 }

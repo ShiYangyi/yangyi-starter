@@ -12,14 +12,9 @@ import static org.mockito.Mockito.*;
 @ExtendWith(SpringExtension.class)
 public class ManagerServiceTest {
     User user = mock(User.class);
-    User curUser = mock(User.class);
     UserService userService = mock(UserService.class);
     UserRepository userRepository = mock(UserRepository.class);
     ManagerService managerService = new ManagerService(userService, userRepository);
-    /*User manager = User.builder().id(BigInteger.valueOf(1111L)).name("yyyy").password("yyyyyy").role("ROLE_MANAGER").build();
-    User cleverAssistant = User.builder().id(BigInteger.valueOf(1112L)).name("yyyX").password("yyyyyy").role("ROLE_CLEVER_ASSISTANT").build();
-    User stupidAssistant = User.builder().id(BigInteger.valueOf(1112L)).name("yyyX").password("yyyyyy").role("ROLE_STUPID_ASSISTANT").build();
-    User user = User.builder().id(BigInteger.valueOf(1113L)).name("yyyY").password("yyyyyy").role("ROLE_USER").build();*/
 
     @Test
     //会自动补齐前缀ROLE_

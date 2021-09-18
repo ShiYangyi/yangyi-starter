@@ -36,6 +36,7 @@ public class ManagerService {
                 return true;
             }
         }*/
+        //如果想检测数据库中在姓名字段添加的唯一索引是否生效，可以循环1万次查询操作，看执行时间，另一种也可以通过explain指令来查看性能。
         if(userService.findUserByName(user.getUsername()) != null) {
             return true;
         }
