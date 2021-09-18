@@ -16,7 +16,7 @@ import java.util.Optional;
 @Service
 public class UserService {
 
-    private final UserRepository userRepository;
+    UserRepository userRepository;
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -62,8 +62,7 @@ public class UserService {
             //if (!userForBase.getPassword().equals(bCryptPasswordEncoder.encode(user.getPassword()))) {
                 loginResponse.setMessage("登录失败,密码错误");
             } else {
-                //过期时间100分钟
-                UserToken userToken = new UserToken(userForBase.getId().toString(), SecurityConstants.SECRET, SecurityConstants.EXPIRES);
+                UserToken userToken = new UserToken(userForBase.getId().toString(), SecurityConstants.SECRET);
                 //UserToken userToken = new UserToken(userForBase.getId().toString(), userForBase.getPassword(), 100);
                 String token = userToken.getToken();
                 /*Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
