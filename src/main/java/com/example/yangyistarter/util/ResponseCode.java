@@ -18,7 +18,9 @@ public enum ResponseCode {
     ROLE_IS_NOT_MANAGER(10006, "role is not manager"),
     PARKINGLOT_ALREADY_EXISTS(10007, "parking lot already exists"),
     PARKINGLOT_DELETE_SUCCESS(10008, "parking lot delete success"),
-    PARKINGLOT_NOT_EXIST(10009, "parking lot not exist");
+    PARKINGLOT_NOT_EXIST(10009, "parking lot not exist"),
+    USER_DELETE_SUCCESS(10010,"user delete successful"),
+    USER_NOT_EXIST(10002, "user not exist");
 
     private static final Set<String> Response_CODE_VALUES = ImmutableSet.copyOf(
             //注意写法，把获取到的code组成set集合。

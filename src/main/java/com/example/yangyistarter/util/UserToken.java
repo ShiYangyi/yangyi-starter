@@ -16,8 +16,7 @@ public class UserToken {
     //@Getter
     private String userId;
     private String password;
-    // int minutes
-    private int expires;
+
     /*public UserToken(@Value("708") String userId,
                                     @Value("SecretKeyToGenJWTs") String password,
                                     //expires值为1，单位为分钟
@@ -34,7 +33,7 @@ public class UserToken {
                 //把userId存储到了claim，这样解码时就是通过从claim获取userId来判断用户。编码时把用户信息存储到了哪里，判断用户解码时就是从哪个位置获取相应信息。
                 //也可以通过setSubject()把用户信息存储到subject，也可以通过其他的set()方法把用户信息存储到其他位置。
                 .claim("userId", userId)
-                .setExpiration(Date.from(Instant.now().plus(expires, ChronoUnit.MINUTES)))
+                .setExpiration(Date.from(Instant.now().plus(SecurityConstants.EXPIRES, ChronoUnit.MINUTES)))
                 .signWith(SignatureAlgorithm.HS512, SecurityConstants.SECRET.getBytes(Charset.defaultCharset()))
                 .compact();
         /*Claims body = Jwts.parser()

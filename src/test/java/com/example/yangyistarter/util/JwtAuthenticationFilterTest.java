@@ -2,6 +2,8 @@ package com.example.yangyistarter.util;
 
 import com.example.yangyistarter.entity.User;
 import com.example.yangyistarter.service.UserService;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.http.HttpHeaders;
@@ -13,6 +15,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.nio.charset.Charset;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.Optional;
 import static org.mockito.Mockito.*;
 
@@ -54,7 +60,13 @@ class JwtAuthenticationFilterTest {
 
         when(httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn(
                 //userId为18的token。
-                "eyJhbGciOiJIUzUxMiJ9.eyJ1c2VySWQiOiIxOCIsImV4cCI6MTYzMTk2MzIwNX0.ZwmDbraJ9FBzDmbS6qj9NWv6z_0genV1C95mkS-H_J3AMURiWQLFncUcBgwCjb-Og-9K0MWzzUZMxaB9u3hVBQ");
+                Jwts.builder()
+                        //把userId存储到了claim，这样解码时就是通过从claim获取userId来判断用户。编码时把用户信息存储到了哪里，判断用户解码时就是从哪个位置获取相应信息。
+                        //也可以通过setSubject()把用户信息存储到subject，也可以通过其他的set()方法把用户信息存储到其他位置。
+                        .claim("userId", 18L)
+                        .setExpiration(Date.from(Instant.now().plus(SecurityConstants.EXPIRES, ChronoUnit.MINUTES)))
+                        .signWith(SignatureAlgorithm.HS512, SecurityConstants.SECRET.getBytes(Charset.defaultCharset()))
+                        .compact());
         filter.doFilterInternal(httpServletRequest, httpServletResponse, filterChain);
         when(userService.findUserById(BigInteger.valueOf(18L))).thenReturn(Optional.empty());
 
@@ -78,7 +90,13 @@ class JwtAuthenticationFilterTest {
         User user = User.builder().id(new BigInteger(String.valueOf(18))).name("11112222").password("11111111111").build();
         when(httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn(
                 //userId为18的token。
-                "eyJhbGciOiJIUzUxMiJ9.eyJ1c2VySWQiOiIxOCIsImV4cCI6MTYzMTk2MzIwNX0.ZwmDbraJ9FBzDmbS6qj9NWv6z_0genV1C95mkS-H_J3AMURiWQLFncUcBgwCjb-Og-9K0MWzzUZMxaB9u3hVBQ");
+                Jwts.builder()
+                        //把userId存储到了claim，这样解码时就是通过从claim获取userId来判断用户。编码时把用户信息存储到了哪里，判断用户解码时就是从哪个位置获取相应信息。
+                        //也可以通过setSubject()把用户信息存储到subject，也可以通过其他的set()方法把用户信息存储到其他位置。
+                        .claim("userId", 18L)
+                        .setExpiration(Date.from(Instant.now().plus(SecurityConstants.EXPIRES, ChronoUnit.MINUTES)))
+                        .signWith(SignatureAlgorithm.HS512, SecurityConstants.SECRET.getBytes(Charset.defaultCharset()))
+                        .compact());
         when(userService.findUserById(BigInteger.valueOf(18L))).thenReturn(Optional.of(user));
         filter.doFilterInternal(httpServletRequest, httpServletResponse, filterChain);
 
