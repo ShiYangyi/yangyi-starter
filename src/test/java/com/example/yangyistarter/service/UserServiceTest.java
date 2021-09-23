@@ -1,19 +1,15 @@
 package com.example.yangyistarter.service;
 
 import com.example.yangyistarter.dto.UserDTO;
-import com.example.yangyistarter.entity.LoginResponse;
 import com.example.yangyistarter.entity.User;
 import com.example.yangyistarter.repository.UserRepository;
-import com.example.yangyistarter.util.ResponseCode;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Optional;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -23,23 +19,21 @@ public class UserServiceTest {
     //服务层字段的限制注解是不会起作用的，只有控制层才会起作用，而且只会控制层方法传入参数时使用了@Valid
     //不要使用@MockBean注解，使用mock()这种方式更好，这里换做注解，测试跑不过，在service层方法里userRepository为null，报错
     UserRepository userRepository = mock(UserRepository.class);
-    UserDTO curUserDTO = UserDTO.builder().id(BigInteger.valueOf(1111L)).name("zly").password("2").build();
-    User curUser = User.builder().id(BigInteger.valueOf(1111L)).name("zly").password("2").build();
+    UserDTO userDTO = UserDTO.builder().id(new BigInteger(String.valueOf(1111))).name("zly").password("1").build();
+    String savedPassword = "$2a$10$lsWFF4FHNj2Y3dyKv1iCf.4pMytV4dPgfoVmdX18w3V3Q2lbW1/ae";//对应密码1
+    User user = User.builder().id(new BigInteger(String.valueOf(1111))).name("zly").password(savedPassword).build();
+    User newUser = User.builder().id(BigInteger.valueOf(111L)).name("zl").password("2").build();
+    UserDTO newUserDTO = UserDTO.builder().id(BigInteger.valueOf(1111L)).name("zly").password("2").build();
     UserService userService = new UserService(userRepository);
 
     @Test
     public void should_save_user_when_register() {
-
-        //given
-        User user = User.builder().id(BigInteger.valueOf(1L)).name("sss").password("222222").build();
-
         //不要写下面这句，会在service层方法里userRepository为null，报错
         //when(userService.findUserByName(curUser.getUsername())).thenReturn(null);
-        when(userRepository.findAll()).thenReturn(Collections.singletonList(user));
-        when(userRepository.save(curUser)).thenReturn(curUser);
+        when(userRepository.save(user)).thenReturn(user);
         //then
-        Assertions.assertEquals("user registered successful", userService.register(curUser).getMessage());
-        Assertions.assertEquals(10003, userService.register(curUser).getCode());
+        Assertions.assertEquals("user registered successful", userService.register(user).getMessage());
+        Assertions.assertEquals(10003, userService.register(user).getCode());
 
         //这条语句与项目无关，注入了，为什么bCryptPasswordEncoder还是空的。
         //1.如果测试方法里面只有@MockBean没有@AutoWired注解，那么只需要在类上添加@ExtendWith(SpringExtension.class)，
@@ -60,143 +54,50 @@ public class UserServiceTest {
         //第二步，由于mock对象是userRepository，需要mock的方法是范围内的findAll()，所以写下下面的when()thenReturn()，
         // 由于findAll()方法返回的是含有User的列表，所以这里应该指定mock对象执行该方法后的返回值为含有和curUser同名的用户的列表，
         // 此时是不会真正执行findAll()。
-        UserDTO userDTO = UserDTO.builder().id(BigInteger.valueOf(1111L)).name("zly").password("1").build();
-        String savedPassword = "$2a$10$lsWFF4FHNj2Y3dyKv1iCf.4pMytV4dPgfoVmdX18w3V3Q2lbW1/ae";//对应密码1
-        User user = User.builder().id(BigInteger.valueOf(1111L)).name("zly").password(savedPassword).build();
-        when(userRepository.findAll()).thenReturn(Collections.singletonList(user));
-        UserService userService = new UserService(userRepository);
-        ResponseCode responseCode = userService.register(curUser);
-
-        Assertions.assertEquals("user already exists", responseCode.getMessage());
-
+        when(userRepository.findByName("zly")).thenReturn(Optional.of(user));
+        Assertions.assertEquals("user already exists", userService.register(user).getMessage());
     }
 
     @Test
     public void should_save_user_when_different_name() {
-
-        UserDTO userDTO = UserDTO.builder().id(BigInteger.valueOf(1111L)).name("小明").password("1").build();
-        String savedPassword = "$2a$10$lsWFF4FHNj2Y3dyKv1iCf.4pMytV4dPgfoVmdX18w3V3Q2lbW1/ae";//对应密码1
-        User user = User.builder().id(BigInteger.valueOf(1111L)).name("小明").password(savedPassword).build();
-        when(userRepository.findAll()).thenReturn(Collections.singletonList(user));
-        UserService userService = new UserService(userRepository);
-        ResponseCode responseCode = userService.register(curUser);
-
-        Assertions.assertEquals("user registered successful", responseCode.getMessage());
-
+        when(userRepository.findByName("zly")).thenReturn(Optional.of(user));
+        Assertions.assertEquals("user registered successful", userService.register(newUser).getMessage());
     }
 
     @Test
     public void should_failed_when_login_user_not_exists() {
-
-        UserDTO userDTO = UserDTO.builder().id(BigInteger.valueOf(1111L)).name("zly").password("1").build();
-        UserService userService = new UserService(userRepository);
         //下面写法错误，因为这里mock的对象是userRepository，userService不是mock的对象，所以调用findUserByName()是会真正执行逻辑的。
         // 正确的测试写法是：由于使用到findUserByName()，里面执行了userRepository.findAll()，所以正确写法是mock对象执行findAll()，期望返回空列表。
         //when(userService.findUserByName(user)).thenReturn(null);
         when(userRepository.findAll()).thenReturn(new ArrayList<User>(){});
         Assertions.assertEquals("登录失败,用户不存在", userService.login(userDTO).getMessage());
-
     }
 
     @Test
     public void should_failed_when_login_error_password() {
-
-        UserDTO userDTO = UserDTO.builder().id(BigInteger.valueOf(1111L)).name("zly").password("1").build();
-        String savedPassword = "$2a$10$lsWFF4FHNj2Y3dyKv1iCf.4pMytV4dPgfoVmdX18w3V3Q2lbW1/ae";//对应密码1
-        User user = User.builder().id(BigInteger.valueOf(1111L)).name("zly").password(savedPassword).build();
-        UserService userService = new UserService(userRepository);
-        when(userRepository.findAll()).thenReturn(Collections.singletonList(user));
-        Assertions.assertEquals("登录失败,密码错误", userService.login(curUserDTO).getMessage());
+        when(userRepository.findByName("zly")).thenReturn(Optional.of(user));
+        Assertions.assertEquals("登录失败,密码错误", userService.login(newUserDTO).getMessage());
     }
 
     @Test
     public void should_login_when_password_correct() {
-
-        UserDTO userDTO = UserDTO.builder().id(new BigInteger(String.valueOf(1111))).name("zly").password("1").build();
-        String savedPassword = "$2a$10$lsWFF4FHNj2Y3dyKv1iCf.4pMytV4dPgfoVmdX18w3V3Q2lbW1/ae";//对应密码1
-        User user = User.builder().id(new BigInteger(String.valueOf(1111))).name("zly").password(savedPassword).build();
-        UserService userService = new UserService(userRepository);
-        when(userRepository.findAll()).thenReturn(Collections.singletonList(user));
-        LoginResponse loginResponse = userService.login(userDTO);
-        Assertions.assertEquals("登陆成功", loginResponse.getMessage());
-    }
-
-    @Test
-    public void should_return_user_when_given_valid_user() {
-
-        UserDTO userDTO = UserDTO.builder().id(new BigInteger(String.valueOf(1111))).name("zly").password("1").build();
-        String savedPassword = "$2a$10$lsWFF4FHNj2Y3dyKv1iCf.4pMytV4dPgfoVmdX18w3V3Q2lbW1/ae";//对应密码1
-        User user = User.builder().id(new BigInteger(String.valueOf(1111))).name("zly").password(savedPassword).build();
-        when(userRepository.findAll()).thenReturn(Collections.singletonList(user));
-        UserService userService = new UserService(userRepository);
-        Assertions.assertEquals(user, userService.findUserByName(user));
-
-    }
-
-    @Test
-    public void should_return_null_when_given_invalid_user() {
-
-        User user = User.builder().id(new BigInteger(String.valueOf(1111))).name("zly").password("1").build();
-        when(userRepository.findAll()).thenReturn(new ArrayList<User>(){});
-        UserService userService = new UserService(userRepository);
-        Assertions.assertNull(userService.findUserByName(user));
-    }
-
-    @Test
-    public void should_return_null_when_given_mismatch_user() {
-
-        UserDTO userDTO = UserDTO.builder().id(new BigInteger(String.valueOf(1111))).name("po").password("1").build();
-        String savedPassword = "$2a$10$lsWFF4FHNj2Y3dyKv1iCf.4pMytV4dPgfoVmdX18w3V3Q2lbW1/ae";//对应密码1
-        User user = User.builder().id(new BigInteger(String.valueOf(1111))).name("po").password(savedPassword).build();
-        when(userRepository.findAll()).thenReturn(Collections.singletonList(user));
-        UserService userService = new UserService(userRepository);
-        Assertions.assertNull(userService.findUserByName(curUser));
+        when(userRepository.findByName("zly")).thenReturn(Optional.of(user));
+        Assertions.assertEquals("登陆成功", userService.login(userDTO).getMessage());
     }
 
     @Test
     public void should_return_user_when_given_valid_username() {
-
-        UserDTO userDTO = UserDTO.builder().id(new BigInteger(String.valueOf(1111))).name("zly").password("1").build();
-        String savedPassword = "$2a$10$lsWFF4FHNj2Y3dyKv1iCf.4pMytV4dPgfoVmdX18w3V3Q2lbW1/ae";//对应密码1
-        User user = User.builder().id(new BigInteger(String.valueOf(1111))).name("zly").password(savedPassword).build();
-        when(userRepository.findAll()).thenReturn(Collections.singletonList(user));
-        UserService userService = new UserService(userRepository);
-        Assertions.assertEquals(user, userService.findUserByName(user.getUsername()));
-
-    }
-
-    @Test
-    public void should_return_null_when_given_invalid_username() {
-
-        User user = User.builder().id(new BigInteger(String.valueOf(1111))).name("zly").password("1").build();
-        when(userRepository.findAll()).thenReturn(new ArrayList<User>(){});
-        UserService userService = new UserService(userRepository);
-        Assertions.assertNull(userService.findUserByName(user.getUsername()));
-    }
-
-    @Test
-    public void should_return_null_when_given_mismatch_username() {
-
-        UserDTO userDTO = UserDTO.builder().id(new BigInteger(String.valueOf(1111))).name("po").password("1").build();
-        String savedPassword = "$2a$10$lsWFF4FHNj2Y3dyKv1iCf.4pMytV4dPgfoVmdX18w3V3Q2lbW1/ae";//对应密码1
-        User user = User.builder().id(new BigInteger(String.valueOf(1111))).name("po").password(savedPassword).build();
-        when(userRepository.findAll()).thenReturn(Collections.singletonList(user));
-        UserService userService = new UserService(userRepository);
-        Assertions.assertNull(userService.findUserByName(curUser.getUsername()));
+        when(userRepository.findByName("zly")).thenReturn(Optional.of(user));
+        Assertions.assertEquals(user, userService.findUserByName("zly"));
     }
 
     @Test
     public void should_return_user_when_given_valid_id() {
 
-        User user = User.builder().id(new BigInteger(String.valueOf(1111))).name("zly11").password("1111111").build();
-        when(userRepository.findById(any())).thenReturn(Optional.of(user));
+        when(userRepository.findById(BigInteger.valueOf(1111))).thenReturn(Optional.of(user));
         //下面语句出错的原因是：userRepository是一个mock的对象，那么userRepository.findById(user.getId())这部分结果肯定是空，那么用这个结果去调用get()方法，肯定会抛错，
         //所以改正的办法是换成上面的when()语句，不管findById()中传入任何参数，都让它返回user的Optional类。
-        //when(userRepository.findById(user.getId()).get()).thenReturn(user);
-        //when(userRepository.getById(user.getId())).thenReturn(user);
-        UserService userService = new UserService(userRepository);
-        Assertions.assertEquals(user, userService.findUserById(user.getId()).get());
-
+        Assertions.assertEquals(user, userService.findUserById(BigInteger.valueOf(1111)).get());
     }
 
     @Test
