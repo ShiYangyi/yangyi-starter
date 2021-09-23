@@ -9,8 +9,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,12 +65,14 @@ public class ParkingService {
             throw new IllegalArgumentException("没有合适的停车位");
         }
         List<Map.Entry<String, Integer>> avaiableParkingSpacesList = new ArrayList<>(avaiableParkingSpaces.entrySet());
-        Collections.sort(avaiableParkingSpacesList, new Comparator<Map.Entry<String, Integer>>() {
+        /*Collections.sort(avaiableParkingSpacesList, new Comparator<Map.Entry<String, Integer>>() {
             public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
                 //按照value值从大到小排序
                 return (o2.getValue() - o1.getValue());
             }
-        });
+        });*/
+        avaiableParkingSpacesList.sort(((o1, o2) -> o2.getValue() - o1.getValue()));
+        //avaiableParkingSpacesList.sort(Comparator.comparingLong(ParkingSpace::getValue));
         String avaiableParkingLotName = avaiableParkingSpacesList.get(0).getKey();
         BigInteger parkingId = BigInteger.valueOf(Long.MAX_VALUE);
         for (ParkingSpace parkingSpace : parkingSpaceRepository.findAll()) {
