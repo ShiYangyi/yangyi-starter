@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 @AllArgsConstructor
@@ -25,29 +25,33 @@ public class ParkingService {
     ParkingLotRepository parkingLotRepository;
 
     public BigInteger randomParking() {
-        BigInteger minId = BigInteger.valueOf(Long.MAX_VALUE);
-        BigInteger maxId = BigInteger.valueOf(Long.MIN_VALUE);
-        int avaiableSum = 0;
+        List<ParkingSpace> avaiableParkingSpaceList = new ArrayList<>();
+        //由于这种实现会造成很多浪费，得到的随机数对应的数据可能是不存在的，为了避免浪费，应该将符合要求的数据先统一存储在集合里，然后再在该集合里随机选取数据
         for (ParkingSpace parkingSpace : parkingSpaceRepository.findAll()) {
             if (!parkingSpace.getIsUsed()) {
-                avaiableSum++;
+                avaiableParkingSpaceList.add(parkingSpace);
             }
-            minId = parkingSpace.getId().compareTo(minId) < 0 ? parkingSpace.getId() : minId;
-            maxId = parkingSpace.getId().compareTo(maxId) < 0 ? maxId : parkingSpace.getId();
         }
-        if(avaiableSum == 0) {
+        if(avaiableParkingSpaceList.isEmpty()) {
             throw new IllegalArgumentException("没有合适的停车位");
         }
-        Random random = new Random();
-        Optional<ParkingSpace> parkingSpace = Optional.empty();
-        int randomId = random.nextInt(maxId.intValue() - minId.intValue()) + minId.intValue();
-        parkingSpace = parkingSpaceRepository.findById(BigInteger.valueOf(randomId));
-        while(parkingSpace.isPresent() && !parkingSpace.get().getIsUsed()) {
-            parkingSpace.get().setIsUsed(true);
-            parkingSpaceRepository.save(parkingSpace.get());
-            return BigInteger.valueOf(randomId);
-        }
-        throw new IllegalArgumentException("没有合适的停车位");
+        //不使用Random类，改为使用ThreadLocalRandom.current().nextInt(min,max)
+        /*Random random = new Random();
+        int randomId = random.nextInt(maxId.intValue() - minId.intValue()) + minId.intValue();*/
+
+        //ThreadLocalRandom.current().nextInt(a,b)表示随机数包含a，但不包含b
+        //int randomId = ThreadLocalRandom.current().nextInt(minId.intValue(), maxId.intValue()+1);
+        int random = ThreadLocalRandom.current().nextInt(0, avaiableParkingSpaceList.size());
+        Optional<ParkingSpace> parkingSpace = parkingSpaceRepository.findById(avaiableParkingSpaceList.get(random).getId());
+        /*while(!(parkingSpace.isPresent() && !parkingSpace.get().getIsUsed())) {
+            randomId = ThreadLocalRandom.current().nextInt(minId.intValue(), maxId.intValue()+1);
+            parkingSpace = parkingSpaceRepository.findById(BigInteger.valueOf(randomId));
+        }*/
+        //由于这种实现会造成很多浪费，得到的随机数对应的数据可能是不存在的，为了避免浪费，应该将符合要求的数据先统一存储在集合里，然后再在该集合里随机选取数据
+
+        parkingSpace.get().setIsUsed(true);
+        parkingSpaceRepository.save(parkingSpace.get());
+        return parkingSpace.get().getReceiptId();
     }
 
     public BigInteger cleverParking() {
@@ -58,6 +62,9 @@ public class ParkingService {
                     avaiableParkingSpaces.put(parkingLot.getName(), avaiableParkingSpaces.getOrDefault(parkingLot.getName(), 0) + 1);
                 }
             }
+        }
+        if(avaiableParkingSpaces.isEmpty()) {
+            throw new IllegalArgumentException("没有合适的停车位");
         }
         List<Map.Entry<String, Integer>> avaiableParkingSpacesList = new ArrayList<>(avaiableParkingSpaces.entrySet());
         Collections.sort(avaiableParkingSpacesList, new Comparator<Map.Entry<String, Integer>>() {
