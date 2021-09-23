@@ -5,20 +5,16 @@ import com.example.yangyistarter.entity.ParkingSpace;
 import com.example.yangyistarter.repository.ParkingLotRepository;
 import com.example.yangyistarter.repository.ParkingSpaceRepository;
 import com.example.yangyistarter.util.ResponseCode;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@AllArgsConstructor
 public class ParkingLotService {
 
     ParkingLotRepository parkingLotRepository;
     ParkingSpaceRepository parkingSpaceRepository;
     UserService userService;
-
-    public ParkingLotService(ParkingLotRepository parkingLotRepository, ParkingSpaceRepository parkingSpaceRepository, UserService userService) {
-        this.parkingLotRepository = parkingLotRepository;
-        this.parkingSpaceRepository = parkingSpaceRepository;
-        this.userService = userService;
-    }
 
     public ResponseCode addParkingLot(ParkingLot parkingLot) {
         for (ParkingLot curParkingLot : parkingLotRepository.findAll()) {
