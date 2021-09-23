@@ -19,16 +19,16 @@ import java.util.Optional;
 public class UserService {
 
     UserRepository userRepository;
+    /*如果是通过@Autowired注入的对象，在写测试时，是空的，如果要初始化，也是要通过构造函数，所以还不能直接在定义类的时候就用构造函数的形式来引入属性，
+    这样在测试时这些内部对象就不会为空
+    @Autowired
+    BCryptPasswordEncoder bCryptPasswordEncoder;*/
 
     public ResponseCode register(User user) {
         //不使用findAll()效率低，改为findByName()
-        /*if(findUserByName(user.getUsername()) != null) {
+        User curUser = findUserByName(user.getUsername());
+        if (curUser != null) {
             return ResponseCode.USER_ALREADY_EXISTS;
-        }*/
-        for (User curUser : userRepository.findAll()) {
-            if (curUser.getName().equals(user.getName())) {
-                return ResponseCode.USER_ALREADY_EXISTS;
-            }
         }
         userRepository.save(user);
         return ResponseCode.USER_REGISTER_SUCCESS;
@@ -49,6 +49,7 @@ public class UserService {
     }*/
 
     public LoginResponse login(UserDTO userDTO) {
+
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
         //这里不要用JSONObject类，因为现在字段少，所以这样写可以，但是字段多就不适合了，所以最好是新建一个返回类，把需要的东西作为字段填充进去
@@ -56,13 +57,13 @@ public class UserService {
         /*JSONObject jsonObject = new JSONObject();*/
 
         User user = User.builder().id(userDTO.getId()).name(userDTO.getName()).password(userDTO.getPassword()).build();
-        User userForBase = findUserByName(user);
+        User userForBase = findUserByName(user.getUsername());
         /*User userForBase = findUserById(user.getId());*/
         if (userForBase == null) {
             loginResponse.setMessage("登录失败,用户不存在");
         } else {
-            if(!bCryptPasswordEncoder.matches(userDTO.getPassword(), userForBase.getPassword())) {
-            //if (!userForBase.getPassword().equals(bCryptPasswordEncoder.encode(user.getPassword()))) {
+            if (!bCryptPasswordEncoder.matches(userDTO.getPassword(), userForBase.getPassword())) {
+                //if (!userForBase.getPassword().equals(bCryptPasswordEncoder.encode(user.getPassword()))) {
                 loginResponse.setMessage("登录失败,密码错误");
             } else {
                 UserToken userToken = new UserToken(userForBase.getId().toString(), SecurityConstants.SECRET);
@@ -79,25 +80,10 @@ public class UserService {
         return loginResponse;
     }
 
-    public User findUserByName(User user) {
-
-        for (User curUser : userRepository.findAll()) {
-            if (curUser.getName().equals(user.getName())) {
-                return curUser;
-            }
-        }
-        return null;
-    }
-
-    //findUserByName()的实现里最好不要使用findAll,JPA通过注解写sql语句
+    //findUserByName()的实现不要使用findAll
     public User findUserByName(String username) {
-
-        for (User curUser : userRepository.findAll()) {
-            if (curUser.getName().equals(username)) {
-                return curUser;
-            }
-        }
-        return null;
+        Optional<User> user = userRepository.findByName(username);
+        return user.orElse(null);
     }
 
     public Optional<User> findUserById(BigInteger userId) {

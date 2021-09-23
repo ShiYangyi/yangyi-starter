@@ -30,11 +30,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    /*public UserController(BCryptPasswordEncoder bCryptPasswordEncoder, UserService userService) {
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-        this.userService = userService;
-    }*/
-
     //什么角色都可以访问这个接口，只是这个接口只有注册普通用户角色的用户才会注册成功
     @PostMapping("/register")
     //@Validated
