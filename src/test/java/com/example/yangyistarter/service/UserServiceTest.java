@@ -8,34 +8,38 @@ import com.example.yangyistarter.util.ResponseCode;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 public class UserServiceTest {
 
-    /*@MockBean
-    private BCryptPasswordEncoder bCryptPasswordEncoder;*/
-
-    @MockBean
-    private UserRepository userRepository;
-
     //服务层字段的限制注解是不会起作用的，只有控制层才会起作用，而且只会控制层方法传入参数时使用了@Valid
+    //不要使用@MockBean注解，使用mock()这种方式更好，这里换做注解，测试跑不过，在service层方法里userRepository为null，报错
+    UserRepository userRepository = mock(UserRepository.class);
     UserDTO curUserDTO = UserDTO.builder().id(BigInteger.valueOf(1111L)).name("zly").password("2").build();
     User curUser = User.builder().id(BigInteger.valueOf(1111L)).name("zly").password("2").build();
+    UserService userService = new UserService(userRepository);
 
     @Test
     public void should_save_user_when_register() {
 
+        //given
+        User user = User.builder().id(BigInteger.valueOf(1L)).name("sss").password("222222").build();
+
+        //不要写下面这句，会在service层方法里userRepository为null，报错
+        //when(userService.findUserByName(curUser.getUsername())).thenReturn(null);
+        when(userRepository.findAll()).thenReturn(Collections.singletonList(user));
         when(userRepository.save(curUser)).thenReturn(curUser);
-        Assertions.assertEquals("zly", userRepository.save(curUser).getName());
-        Assertions.assertEquals("2", userRepository.save(curUser).getPassword());
+        //then
+        Assertions.assertEquals("user registered successful", userService.register(curUser).getMessage());
+        Assertions.assertEquals(10003, userService.register(curUser).getCode());
 
         //这条语句与项目无关，注入了，为什么bCryptPasswordEncoder还是空的。
         //1.如果测试方法里面只有@MockBean没有@AutoWired注解，那么只需要在类上添加@ExtendWith(SpringExtension.class)，

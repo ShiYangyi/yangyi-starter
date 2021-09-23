@@ -20,7 +20,10 @@ public enum ResponseCode {
     PARKINGLOT_DELETE_SUCCESS(10008, "parking lot delete success"),
     PARKINGLOT_NOT_EXIST(10009, "parking lot not exist"),
     USER_DELETE_SUCCESS(10010,"user delete successful"),
-    USER_NOT_EXIST(10002, "user not exist");
+    USER_NOT_EXIST(10011, "user not exist"),
+    RECEIPT_INVALID(10012, "receipt is invalid"),
+    PICK_UP_CAR_SUCCESSFUL(10013, "pick up car successful"),
+    PARKING_SPACE_INVALID(10014, "free parking space and invalid request");
 
     private static final Set<String> Response_CODE_VALUES = ImmutableSet.copyOf(
             //注意写法，把获取到的code组成set集合。

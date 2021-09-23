@@ -7,6 +7,7 @@ import com.example.yangyistarter.repository.UserRepository;
 import com.example.yangyistarter.util.ResponseCode;
 import com.example.yangyistarter.util.SecurityConstants;
 import com.example.yangyistarter.util.UserToken;
+import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -14,14 +15,16 @@ import java.math.BigInteger;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class UserService {
 
     UserRepository userRepository;
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     public ResponseCode register(User user) {
+        //不使用findAll()效率低，改为findByName()
+        /*if(findUserByName(user.getUsername()) != null) {
+            return ResponseCode.USER_ALREADY_EXISTS;
+        }*/
         for (User curUser : userRepository.findAll()) {
             if (curUser.getName().equals(user.getName())) {
                 return ResponseCode.USER_ALREADY_EXISTS;
@@ -86,6 +89,7 @@ public class UserService {
         return null;
     }
 
+    //findUserByName()的实现里最好不要使用findAll,JPA通过注解写sql语句
     public User findUserByName(String username) {
 
         for (User curUser : userRepository.findAll()) {
