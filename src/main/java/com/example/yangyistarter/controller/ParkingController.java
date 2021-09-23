@@ -33,5 +33,4 @@ public class ParkingController {
     public BigInteger parking() {
         return parkingService.parking();
     }
-
 }
