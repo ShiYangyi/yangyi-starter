@@ -5,7 +5,6 @@ import com.example.yangyistarter.repository.UserRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import static org.mockito.Mockito.*;
 
@@ -16,8 +15,9 @@ public class ManagerServiceTest {
     ManagerService managerService = new ManagerService(userService, userRepository);
 
     @Test
+    //mock对象访问接口是在controller层测试的，所以写在这里是赘余
     //会自动补齐前缀ROLE_
-    @WithMockUser(roles = {"MANAGER"})
+    //@WithMockUser(roles = {"MANAGER"})
     public void should_add_user_when_role_is_manager() {
 
         //given
@@ -37,7 +37,7 @@ public class ManagerServiceTest {
 
     @Test
     //会自动补齐前缀ROLE_
-    @WithMockUser(roles = {"MANAGER"})
+    //@WithMockUser(roles = {"MANAGER"})
     public void should_add_user_when_role_is_clever_assistant() {
         //given
         User cleverAssistant = User.builder().name("syyyy").role("ROLE_CLEVER_ASSISTANT").build();
@@ -51,7 +51,7 @@ public class ManagerServiceTest {
 
     @Test
     //会自动补齐前缀ROLE_
-    @WithMockUser(roles = {"MANAGER"})
+    //@WithMockUser(roles = {"MANAGER"})
     public void should_add_user_when_role_is_stupid_assistant() {
         //given
         User stupidAssistant = User.builder().name("syyyy").role("ROLE_STUPID_ASSISTANT").build();
@@ -64,7 +64,7 @@ public class ManagerServiceTest {
 
     @Test
     //会自动补齐前缀ROLE_
-    @WithMockUser(roles = {"MANAGER"})
+    //@WithMockUser(roles = {"MANAGER"})
     public void should_add_user_when_role_is_user() {
         //given
         User user = User.builder().name("syyyy").role("ROLE_USER").build();
@@ -77,7 +77,7 @@ public class ManagerServiceTest {
 
     @Test
     //会自动补齐前缀ROLE_
-    @WithMockUser(roles = {"MANAGER"})
+    //@WithMockUser(roles = {"MANAGER"})
     public void should_add_user_failed_when_role_is_duplicate() {
         //given
         User stupidAssistant = User.builder().name("syyyy").role("ROLE_STUPID_ASSISTANT").build();
@@ -90,21 +90,22 @@ public class ManagerServiceTest {
 
     @Test
     //会自动补齐前缀ROLE_
-    @WithMockUser(roles = {"MANAGER"})
+    //@WithMockUser(roles = {"MANAGER"})
     public void should_return_invalid_request_when_role_is_manager() {
 
-        //given
+        //given，这里user用户对象最好是用new，而不用mock
         User manager = User.builder().name("syyyy").role("ROLE_MANAGER").build();
         //when
         when(userRepository.save(manager)).thenReturn(manager);
         when(userService.findUserByName(manager.getUsername())).thenReturn(manager);
+        //注意上面的when语句是mock的getUsername()方法，不是getName()方法，所以，现在在判断语句中也是使用getUsername()而不是getName()，要统一起来
         Assertions.assertEquals("invalid request", managerService.deleteUser(manager.getUsername()).getMessage());
 
     }
 
     @Test
     //会自动补齐前缀ROLE_
-    @WithMockUser(roles = {"MANAGER"})
+    //@WithMockUser(roles = {"MANAGER"})
     public void should_delete_user_when_role_is_clever_assistant() {
 
         //given
@@ -119,7 +120,7 @@ public class ManagerServiceTest {
 
     @Test
     //会自动补齐前缀ROLE_
-    @WithMockUser(roles = {"MANAGER"})
+    //@WithMockUser(roles = {"MANAGER"})
     public void should_delete_user_when_role_is_stupid_assistant() {
 
         //given
@@ -134,7 +135,7 @@ public class ManagerServiceTest {
 
     @Test
     //会自动补齐前缀ROLE_
-    @WithMockUser(roles = {"MANAGER"})
+    //@WithMockUser(roles = {"MANAGER"})
     public void should_return_invalid_request_when_role_is_user() {
         //given
         //getName(),getUsername
@@ -147,7 +148,7 @@ public class ManagerServiceTest {
 
     @Test
     //会自动补齐前缀ROLE_
-    @WithMockUser(roles = {"MANAGER"})
+    //@WithMockUser(roles = {"MANAGER"})
     public void should_delete_stupid_assistant_failed_when_user_is_not_exist() {
         //given
         User stupidAssistant = User.builder().name("syyyyy").role("ROLE_STUPID_ASSISTANT").build();

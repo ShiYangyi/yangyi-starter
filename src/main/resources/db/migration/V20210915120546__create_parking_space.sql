@@ -1,7 +1,0 @@
-CREATE TABLE IF NOT EXISTS `parking_space` (
-    `id` BIGINT NOT NULL AUTO_INCREMENT,
-    `isUsed` TINYINT(1) NOT NULL DEFAULT 0,
-    `receipt` VARCHAR(50) DEFAULT '',
-    `parkingLotName` VARCHAR(45) NOT NULL DEFAULT 1,
-    PRIMARY KEY(id)
-);
