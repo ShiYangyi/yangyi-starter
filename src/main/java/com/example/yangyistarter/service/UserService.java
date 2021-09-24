@@ -54,7 +54,7 @@ public class UserService {
         LoginResponse loginResponse = new LoginResponse();
         /*JSONObject jsonObject = new JSONObject();*/
 
-        User user = User.builder().id(userDTO.getId()).name(userDTO.getName()).password(userDTO.getPassword()).build();
+        User user = User.builder().name(userDTO.getName()).password(userDTO.getPassword()).build();
         User userForBase = findUserByName(user.getUsername());
         /*User userForBase = findUserById(user.getId());*/
         if (userForBase == null) {

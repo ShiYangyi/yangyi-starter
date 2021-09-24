@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/manager")
+@RequestMapping("/stuffs")
 public class ManagerController {
     @Autowired
     ManagerService managerService;
@@ -24,7 +24,7 @@ public class ManagerController {
     BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @PreAuthorize("hasRole('ROLE_MANAGER')")
-    @PostMapping("/add")
+    @PostMapping()
     //测试这个接口时需要带上token，否则是无法验证用户身份的
     //这里用到了aop，用到了代理，代理是框架来实现的，因为通过postman传进来的是一个json，
     // json需要转换成对象，这些数据流的转换工作都是框架去实现的，在实现自己写的方法之前，
@@ -37,7 +37,8 @@ public class ManagerController {
 
     @PreAuthorize("hasRole('ROLE_MANAGER')")
     //@PostMapping("/delete")
-    @GetMapping("/delete/{name}")
+    //@GetMapping("/delete/{name}")
+    @DeleteMapping("/{name}")
     //测试这个接口时需要带上token，否则是无法验证用户身份的
     //这里用到了aop，用到了代理，代理是框架来实现的，因为通过postman传进来的是一个json，
     // json需要转换成对象，这些数据流的转换工作都是框架去实现的，在实现自己写的方法之前，
