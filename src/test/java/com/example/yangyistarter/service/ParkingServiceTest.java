@@ -8,8 +8,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
@@ -24,17 +22,17 @@ public class ParkingServiceTest {
     ParkingLotRepository parkingLotRepository = mock(ParkingLotRepository.class);
     ParkingService parkingService = new ParkingService(parkingSpaceRepository, parkingLotRepository);
 
-    ParkingSpace parkingSpace1 = ParkingSpace.builder().id(BigInteger.valueOf(11L)).receiptId(BigInteger.valueOf(11L)).isUsed(false).parkingLotName("parking_lot_1").build();
-    ParkingSpace parkingSpace2 = ParkingSpace.builder().id(BigInteger.valueOf(12L)).receiptId(BigInteger.valueOf(12L)).isUsed(false).parkingLotName("parking_lot_1").build();
-    ParkingSpace parkingSpace3 = ParkingSpace.builder().id(BigInteger.valueOf(13L)).receiptId(BigInteger.valueOf(13L)).isUsed(false).parkingLotName("parking_lot_2").build();
-    ParkingSpace parkingSpace4 = ParkingSpace.builder().id(BigInteger.valueOf(14L)).receiptId(BigInteger.valueOf(14L)).isUsed(false).parkingLotName("parking_lot_2").build();
-    ParkingSpace parkingSpace5 = ParkingSpace.builder().id(BigInteger.valueOf(15L)).receiptId(BigInteger.valueOf(15L)).isUsed(false).parkingLotName("parking_lot_2").build();
-    ParkingSpace parkingSpace6 = ParkingSpace.builder().id(BigInteger.valueOf(16L)).receiptId(BigInteger.valueOf(16L)).isUsed(false).parkingLotName("parking_lot_2").build();
-    ParkingSpace parkingSpace7 = ParkingSpace.builder().id(BigInteger.valueOf(17L)).receiptId(BigInteger.valueOf(17L)).isUsed(true).parkingLotName("parking_lot_1").build();
-    ParkingSpace parkingSpace8 = ParkingSpace.builder().id(BigInteger.valueOf(18L)).receiptId(BigInteger.valueOf(18L)).isUsed(true).parkingLotName("parking_lot_2").build();
+    ParkingSpace parkingSpace1 = ParkingSpace.builder().id(11L).receiptId(11L).isUsed(false).parkingLotName("parking_lot_1").build();
+    ParkingSpace parkingSpace2 = ParkingSpace.builder().id(12L).receiptId(12L).isUsed(false).parkingLotName("parking_lot_1").build();
+    ParkingSpace parkingSpace3 = ParkingSpace.builder().id(13L).receiptId(13L).isUsed(false).parkingLotName("parking_lot_2").build();
+    ParkingSpace parkingSpace4 = ParkingSpace.builder().id(14L).receiptId(14L).isUsed(false).parkingLotName("parking_lot_2").build();
+    ParkingSpace parkingSpace5 = ParkingSpace.builder().id(15L).receiptId(15L).isUsed(false).parkingLotName("parking_lot_2").build();
+    ParkingSpace parkingSpace6 = ParkingSpace.builder().id(16L).receiptId(16L).isUsed(false).parkingLotName("parking_lot_2").build();
+    ParkingSpace parkingSpace7 = ParkingSpace.builder().id(17L).receiptId(17L).isUsed(true).parkingLotName("parking_lot_1").build();
+    ParkingSpace parkingSpace8 = ParkingSpace.builder().id(18L).receiptId(18L).isUsed(true).parkingLotName("parking_lot_2").build();
 
-    ParkingLot parkingLot1 = ParkingLot.builder().id(BigInteger.valueOf(111L)).name("parking_lot_1").username("user1").build();
-    ParkingLot parkingLot2 = ParkingLot.builder().id(BigInteger.valueOf(112L)).name("parking_lot_2").username("user2").build();
+    ParkingLot parkingLot1 = ParkingLot.builder().id(111L).name("parking_lot_1").username("user1").build();
+    ParkingLot parkingLot2 = ParkingLot.builder().id(112L).name("parking_lot_2").username("user2").build();
 
     @Test
     public void should_return_available_receipt_id_when_available_parking_space_exist() {
@@ -43,10 +41,10 @@ public class ParkingServiceTest {
 
         //when
         when(parkingSpaceRepository.findAll()).thenReturn(Arrays.asList(parkingSpace1, parkingSpace2, parkingSpace3, parkingSpace7, parkingSpace7));
-        when(parkingSpaceRepository.findById(BigInteger.valueOf(11L))).thenReturn(Optional.of(parkingSpace1));
+        when(parkingSpaceRepository.findById(11L)).thenReturn(Optional.of(parkingSpace1));
 
         //then
-        Assertions.assertEquals(BigInteger.valueOf(11L), parkingService.parking());
+        Assertions.assertEquals(11L, parkingService.parking());
     }
 
     @Test
@@ -69,10 +67,10 @@ public class ParkingServiceTest {
         //when
         when(parkingLotRepository.findAll()).thenReturn(Arrays.asList(parkingLot1, parkingLot2));
         when(parkingSpaceRepository.findAll()).thenReturn(Arrays.asList(parkingSpace1, parkingSpace2, parkingSpace3, parkingSpace4, parkingSpace5, parkingSpace6, parkingSpace7, parkingSpace8));
-        when(parkingSpaceRepository.findById(BigInteger.valueOf(13L))).thenReturn(Optional.of(parkingSpace3));
+        when(parkingSpaceRepository.findById(13L)).thenReturn(Optional.of(parkingSpace3));
 
         //then
-        Assertions.assertEquals(BigInteger.valueOf(13L), parkingService.cleverParking());
+        Assertions.assertEquals(13L, parkingService.cleverParking());
 
     }
 
@@ -109,7 +107,7 @@ public class ParkingServiceTest {
         //when
         when(parkingLotRepository.findAll()).thenReturn(Arrays.asList(parkingLot1, parkingLot2));
         when(parkingSpaceRepository.findAll()).thenReturn(Arrays.asList(parkingSpace1, parkingSpace2, parkingSpace3, parkingSpace4, parkingSpace5, parkingSpace6, parkingSpace7, parkingSpace8));
-        when(parkingSpaceRepository.findById(BigInteger.valueOf(13L))).thenReturn(Optional.empty());
+        when(parkingSpaceRepository.findById(13L)).thenReturn(Optional.empty());
 
         //then
         IllegalArgumentException error = Assertions.assertThrows(IllegalArgumentException.class, () -> parkingService.cleverParking());
@@ -128,7 +126,7 @@ public class ParkingServiceTest {
         when(parkingSpaceRepository.findById(any())).thenReturn(Optional.of(parkingSpace3));
 
         //then
-        Assertions.assertEquals(BigInteger.valueOf(13L), parkingService.randomParking());
+        Assertions.assertEquals(13L, parkingService.randomParking());
     }
 
     @Test

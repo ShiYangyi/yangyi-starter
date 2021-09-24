@@ -11,9 +11,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-
-import java.math.BigInteger;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -25,7 +22,7 @@ public class ParkingLotControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    ParkingLot parkingLot = ParkingLot.builder().id(BigInteger.valueOf(1111L)).name("parking_lot_1").username("yyyyy").build();
+    ParkingLot parkingLot = ParkingLot.builder().id(1111L).name("parking_lot_1").username("yyyyy").build();
     String curJson = parkingLot.toString();
 
     @Test

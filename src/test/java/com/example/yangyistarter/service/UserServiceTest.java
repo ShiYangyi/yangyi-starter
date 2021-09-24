@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Optional;
 import static org.mockito.Mockito.mock;
@@ -19,11 +18,11 @@ public class UserServiceTest {
     //服务层字段的限制注解是不会起作用的，只有控制层才会起作用，而且只会控制层方法传入参数时使用了@Valid
     //不要使用@MockBean注解，使用mock()这种方式更好，这里换做注解，测试跑不过，在service层方法里userRepository为null，报错
     UserRepository userRepository = mock(UserRepository.class);
-    UserDTO userDTO = UserDTO.builder().id(new BigInteger(String.valueOf(1111))).name("zly").password("1").build();
+    UserDTO userDTO = UserDTO.builder().id(1111L).name("zly").password("1").build();
     String savedPassword = "$2a$10$lsWFF4FHNj2Y3dyKv1iCf.4pMytV4dPgfoVmdX18w3V3Q2lbW1/ae";//对应密码1
-    User user = User.builder().id(new BigInteger(String.valueOf(1111))).name("zly").password(savedPassword).build();
-    User newUser = User.builder().id(BigInteger.valueOf(111L)).name("zl").password("2").build();
-    UserDTO newUserDTO = UserDTO.builder().id(BigInteger.valueOf(1111L)).name("zly").password("2").build();
+    User user = User.builder().id(1111L).name("zly").password(savedPassword).build();
+    User newUser = User.builder().id(111L).name("zl").password("2").build();
+    UserDTO newUserDTO = UserDTO.builder().id(1111L).name("zly").password("2").build();
     UserService userService = new UserService(userRepository);
 
     @Test
@@ -94,15 +93,15 @@ public class UserServiceTest {
     @Test
     public void should_return_user_when_given_valid_id() {
 
-        when(userRepository.findById(BigInteger.valueOf(1111))).thenReturn(Optional.of(user));
+        when(userRepository.findById(1111L)).thenReturn(Optional.of(user));
         //下面语句出错的原因是：userRepository是一个mock的对象，那么userRepository.findById(user.getId())这部分结果肯定是空，那么用这个结果去调用get()方法，肯定会抛错，
         //所以改正的办法是换成上面的when()语句，不管findById()中传入任何参数，都让它返回user的Optional类。
-        Assertions.assertEquals(user, userService.findUserById(BigInteger.valueOf(1111)).get());
+        Assertions.assertEquals(user, userService.findUserById(1111L).get());
     }
 
     @Test
     public void should_return_user_not_present_when_given_invalid_id() {
-        User user = User.builder().id(new BigInteger(String.valueOf(1111))).name("zly").password("1").build();
+        User user = User.builder().id(1111L).name("zly").password("1").build();
         when(userRepository.getById(user.getId())).thenReturn(null);
         UserService userService = new UserService(userRepository);
         //Optional<User>类是不会抛出null的，如果是Optional.Empty，那么get()得到的不是null，而是会抛错，说取不到值。

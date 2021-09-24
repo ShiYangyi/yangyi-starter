@@ -6,8 +6,6 @@ import com.example.yangyistarter.repository.ParkingLotRepository;
 import com.example.yangyistarter.repository.ParkingSpaceRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +20,7 @@ public class ParkingService {
     ParkingSpaceRepository parkingSpaceRepository;
     ParkingLotRepository parkingLotRepository;
 
-    public BigInteger randomParking() {
+    public long randomParking() {
         List<ParkingSpace> avaiableParkingSpaceList = new ArrayList<>();
         //由于这种实现会造成很多浪费，得到的随机数对应的数据可能是不存在的，为了避免浪费，应该将符合要求的数据先统一存储在集合里，然后再在该集合里随机选取数据
         for (ParkingSpace parkingSpace : parkingSpaceRepository.findAll()) {
@@ -52,7 +50,7 @@ public class ParkingService {
         return parkingSpace.get().getReceiptId();
     }
 
-    public BigInteger cleverParking() {
+    public long cleverParking() {
         Map<String, Integer> avaiableParkingSpaces = new HashMap<>();
         for (ParkingLot parkingLot : parkingLotRepository.findAll()) {
             for (ParkingSpace parkingSpace : parkingSpaceRepository.findAll()) {
@@ -74,7 +72,7 @@ public class ParkingService {
         avaiableParkingSpacesList.sort(((o1, o2) -> o2.getValue() - o1.getValue()));
         //avaiableParkingSpacesList.sort(Comparator.comparingLong(ParkingSpace::getValue));
         String avaiableParkingLotName = avaiableParkingSpacesList.get(0).getKey();
-        BigInteger parkingId = BigInteger.valueOf(Long.MAX_VALUE);
+        long parkingId = Long.MAX_VALUE;
         for (ParkingSpace parkingSpace : parkingSpaceRepository.findAll()) {
             if (!parkingSpace.getIsUsed() && avaiableParkingLotName.equals(parkingSpace.getParkingLotName())) {
                 parkingId = parkingSpace.getId().compareTo(parkingId) < 0 ? parkingSpace.getId() : parkingId;
@@ -89,8 +87,8 @@ public class ParkingService {
         throw new IllegalArgumentException("没有合适的停车位");
     }
 
-    public BigInteger parking() {
-        BigInteger parkingId = BigInteger.valueOf(Long.MAX_VALUE);
+    public long parking() {
+        long parkingId = Long.MAX_VALUE;
         for (ParkingSpace parkingSpace : parkingSpaceRepository.findAll()) {
             if (!parkingSpace.getIsUsed()) {
                 parkingId = parkingSpace.getId().compareTo(parkingId) < 0 ? parkingSpace.getId() : parkingId;

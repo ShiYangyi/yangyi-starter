@@ -15,8 +15,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import java.math.BigInteger;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
@@ -37,8 +35,8 @@ public class ParkingControllerTest {
     ParkingLotRepository parkingLotRepository;
 
     //这里自己设置的id值是不会起作用的，因为数据库id设置了自增，所以测试中数据的id会从1开始自增
-    ParkingSpace parkingSpace = ParkingSpace.builder().id(BigInteger.valueOf(1L)).receiptId(BigInteger.valueOf(111L)).isUsed(false).parkingLotName("parking_lot_1").build();
-    ParkingLot parkingLot = ParkingLot.builder().id(BigInteger.valueOf(1L)).name("parking_lot_1").username("user1").build();
+    ParkingSpace parkingSpace = ParkingSpace.builder().id(1L).receiptId(111L).isUsed(false).parkingLotName("parking_lot_1").build();
+    ParkingLot parkingLot = ParkingLot.builder().id(1L).name("parking_lot_1").username("user1").build();
 
     @Test
     @WithMockUser(roles = {"MANAGER"})

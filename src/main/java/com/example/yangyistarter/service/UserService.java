@@ -10,8 +10,6 @@ import com.example.yangyistarter.util.UserToken;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.math.BigInteger;
 import java.util.Optional;
 
 @Service
@@ -86,7 +84,7 @@ public class UserService {
         return user.orElse(null);
     }
 
-    public Optional<User> findUserById(BigInteger userId) {
+    public Optional<User> findUserById(long userId) {
         //不要使用getById()，改用findById()
         return userRepository.findById(userId);
     }

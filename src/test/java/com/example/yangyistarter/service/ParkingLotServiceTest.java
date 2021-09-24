@@ -8,8 +8,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -23,7 +21,7 @@ public class ParkingLotServiceTest {
     ParkingSpaceRepository parkingSpaceRepository = mock(ParkingSpaceRepository.class);
     UserService userService = mock(UserService.class);
     User manager = mock(User.class);
-    ParkingLot parkingLot = ParkingLot.builder().id(BigInteger.valueOf(1111L)).name("parking lot 1").username("yyyyy").build();
+    ParkingLot parkingLot = ParkingLot.builder().id(1111L).name("parking lot 1").username("yyyyy").build();
 
     @Test
     public void should_save_parking_lot_when_manager_add() {

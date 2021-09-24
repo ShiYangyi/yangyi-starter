@@ -7,7 +7,6 @@ import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
-import java.math.BigInteger;
 import java.security.Principal;
 import java.util.Collection;
 
@@ -21,7 +20,8 @@ import java.util.Collection;
 public class User implements UserDetails, Principal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private BigInteger id;
+    //mysql中的BIGINT对应Java中的Long,包装类型
+    private Long id;
     @Column(name = "username")
     private String name;
     private String password;
@@ -65,7 +65,7 @@ public class User implements UserDetails, Principal {
     }
 
     public static class UserBuilder {
-        private BigInteger id;
+        private Long id;
         private String name;
         private String password;
         private String role;
@@ -73,7 +73,7 @@ public class User implements UserDetails, Principal {
         UserBuilder() {
         }
 
-        public UserBuilder id(BigInteger id) {
+        public UserBuilder id(long id) {
             this.id = id;
             return this;
         }

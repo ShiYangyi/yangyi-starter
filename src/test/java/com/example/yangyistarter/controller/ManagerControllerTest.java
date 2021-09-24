@@ -12,7 +12,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import java.math.BigInteger;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -25,7 +24,7 @@ public class ManagerControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    User user = User.builder().id(BigInteger.valueOf(1113L)).name("yyyY").password("yyyyyy").role("ROLE_USER").build();
+    User user = User.builder().id(1113L).name("yyyY").password("yyyyyy").role("ROLE_USER").build();
 
     @Test
     //会自动补齐前缀ROLE_

@@ -15,7 +15,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import java.math.BigInteger;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
@@ -36,7 +35,7 @@ public class UserControllerTest {
     public void should_return_status_200_when_register() throws Exception {
 
         //String curJson = "{\"name\": \"po00\", \"password\": \"000000\" }";
-        UserDTO user = UserDTO.builder().id(BigInteger.valueOf(1111L)).name("poo").password("000000").role("ROLE_USER").build();
+        UserDTO user = UserDTO.builder().id(1111L).name("poo").password("000000").role("ROLE_USER").build();
         String curJson = MAPPER.writeValueAsString(user);
         /*Request user = Request.builder().name("poo").password("000000").build();
         String curJson = user.toString();*/
@@ -61,7 +60,7 @@ public class UserControllerTest {
         //之前跑测试在接口打断点，不能进入的原因是返回了400，返回了400是不会进入接口的，直接就被拦截了。最后在debug的日志中发现了是字符串解析时出了问题，
         // 重写的toString()方法漏写了一个双引号，由于下面.content()中参数应该传入json,json是一种字符串，但不是所有的字符串都是json，
         // 这里最好使用类转json的工具，这里用了writeValueAsString(),使用了ObjectMapper类构造了final static的对象。
-        UserDTO user = UserDTO.builder().id(BigInteger.valueOf(1111L)).name("poo").password("000000").build();
+        UserDTO user = UserDTO.builder().id(1111L).name("poo").password("000000").build();
         String curJson = MAPPER.writeValueAsString(user);
 
         //验证controller监听HTTP请求,调用MockMvc的perform()并提供要测试的URL
@@ -131,7 +130,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 然后里面的参数customer，由于user()方法只能传入两种参数：一个是String类型的对象，一个是UserDetails类的对象。
 这里由于要的是User，所以这里应该传参为User类，为了两边统一，所以要让自定义User类继承UserDetails类。
  */
-        User user = User.builder().id(BigInteger.valueOf(1111L)).name("poo").password("000000").build();
+        User user = User.builder().id(1111L).name("poo").password("000000").build();
         MvcResult getMessagesResult = mockMvc.perform(get("/users/messages")
                                 .with(user(user))
                                 //数据的格式

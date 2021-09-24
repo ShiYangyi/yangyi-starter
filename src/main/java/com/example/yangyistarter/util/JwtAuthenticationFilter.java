@@ -10,13 +10,11 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.util.Optional;
 
@@ -66,7 +64,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
                     .parseClaimsJws(token.replace(SecurityConstants.TOKEN_PREFIX, ""))
                     .getBody();
             String userId = String.valueOf(body.get("userId"));
-            Optional<User> user = userService.findUserById(new BigInteger(userId));
+            Optional<User> user = userService.findUserById(Long.valueOf(userId));
             //user是Optional类，使用user.isPresent()，而不是用user.get()!=null,并不等同，
             // 因为user.get()能够执行这个方法就说明这个不为空是恒成立的，因为get()方法只要成功就是不为空，否则就会抛错
             if (user.isPresent()) {

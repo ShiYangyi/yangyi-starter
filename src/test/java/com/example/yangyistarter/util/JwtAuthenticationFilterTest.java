@@ -14,7 +14,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -68,7 +67,7 @@ class JwtAuthenticationFilterTest {
                         .signWith(SignatureAlgorithm.HS512, SecurityConstants.SECRET.getBytes(Charset.defaultCharset()))
                         .compact());
         filter.doFilterInternal(httpServletRequest, httpServletResponse, filterChain);
-        when(userService.findUserById(BigInteger.valueOf(18L))).thenReturn(Optional.empty());
+        when(userService.findUserById(18L)).thenReturn(Optional.empty());
 
         //判断mock对象有没有调用该方法
         verify(httpServletResponse).sendError(HttpServletResponse.SC_UNAUTHORIZED, String.format("can't find user %s", 18));
@@ -87,7 +86,7 @@ class JwtAuthenticationFilterTest {
         FilterChain filterChain = mock(FilterChain.class);
         //User user = mock(User.class);
         //when(user.getId()).thenReturn(BigInteger.valueOf(18));
-        User user = User.builder().id(new BigInteger(String.valueOf(18))).name("11112222").password("11111111111").build();
+        User user = User.builder().id(18L).name("11112222").password("11111111111").build();
         when(httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn(
                 //userId为18的token。
                 Jwts.builder()
@@ -97,7 +96,7 @@ class JwtAuthenticationFilterTest {
                         .setExpiration(Date.from(Instant.now().plus(SecurityConstants.EXPIRES, ChronoUnit.MINUTES)))
                         .signWith(SignatureAlgorithm.HS512, SecurityConstants.SECRET.getBytes(Charset.defaultCharset()))
                         .compact());
-        when(userService.findUserById(BigInteger.valueOf(18L))).thenReturn(Optional.of(user));
+        when(userService.findUserById(18L)).thenReturn(Optional.of(user));
         filter.doFilterInternal(httpServletRequest, httpServletResponse, filterChain);
 
         //mock对象没有调用该方法
