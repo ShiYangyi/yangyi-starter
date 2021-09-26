@@ -52,7 +52,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 //表示这些请求允许所有用户访问，无条件允许访问
                 //.antMatchers("/users/**").permitAll()
                 //所有的请求都会进入到Filter类中执行
-                .antMatchers("/users/login", "/users/register").permitAll()
+                .antMatchers("/users/login", "/users/register", "/parking").permitAll()
                 //表示允许认证后的用户访问,只有写了这条语句后，后面写的Filter才可能生效。
                 .anyRequest().authenticated()
                 .and()

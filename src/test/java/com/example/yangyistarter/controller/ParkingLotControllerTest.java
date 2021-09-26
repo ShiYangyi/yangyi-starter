@@ -1,6 +1,7 @@
 package com.example.yangyistarter.controller;
 
 import com.example.yangyistarter.entity.ParkingLot;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -23,7 +24,7 @@ public class ParkingLotControllerTest {
     private MockMvc mockMvc;
 
     ParkingLot parkingLot = ParkingLot.builder().id(1111L).name("parking_lot_1").username("yyyyy").build();
-    String curJson = parkingLot.toString();
+    ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
     @WithMockUser(roles = {"MANAGER"})
@@ -32,7 +33,7 @@ public class ParkingLotControllerTest {
         //验证controller监听HTTP请求,调用MockMvc的perform()并提供要测试的URL
         MvcResult mvcResult = mockMvc.perform(post("/parkinglot/add")
                         //.content(objectMapper.writeValueAsString(curUser))
-                        .content(curJson)
+                        .content(objectMapper.writeValueAsString(parkingLot))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
         assertThat(mvcResult.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
@@ -45,7 +46,8 @@ public class ParkingLotControllerTest {
 
         MvcResult mvcResult = mockMvc.perform(post("/parkinglot/add")
                         //.content(objectMapper.writeValueAsString(curUser))
-                        .content(curJson)
+                        //.content(curJson)
+                        .content(objectMapper.writeValueAsString(parkingLot))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
         assertThat(mvcResult.getResponse().getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
@@ -58,7 +60,7 @@ public class ParkingLotControllerTest {
 
         MvcResult mvcResult = mockMvc.perform(post("/parkinglot/add")
                         //.content(objectMapper.writeValueAsString(curUser))
-                        .content(curJson)
+                        .content(objectMapper.writeValueAsString(parkingLot))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
         assertThat(mvcResult.getResponse().getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
@@ -71,7 +73,7 @@ public class ParkingLotControllerTest {
 
         MvcResult mvcResult = mockMvc.perform(post("/parkinglot/add")
                         //.content(objectMapper.writeValueAsString(curUser))
-                        .content(curJson)
+                        .content(objectMapper.writeValueAsString(parkingLot))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
         assertThat(mvcResult.getResponse().getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());

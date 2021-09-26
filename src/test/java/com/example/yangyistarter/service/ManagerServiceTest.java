@@ -72,7 +72,7 @@ public class ManagerServiceTest {
         when(userRepository.save(user)).thenReturn(user);
         when(userService.findUserByName(user.getUsername())).thenReturn(null);
         //then
-        Assertions.assertEquals("invalid request", managerService.addStuffs(user).getMessage());
+        Assertions.assertEquals("role permission deny", managerService.addStuffs(user).getMessage());
     }
 
     @Test
@@ -99,7 +99,7 @@ public class ManagerServiceTest {
         when(userRepository.save(manager)).thenReturn(manager);
         when(userService.findUserByName(manager.getUsername())).thenReturn(manager);
         //注意上面的when语句是mock的getUsername()方法，不是getName()方法，所以，现在在判断语句中也是使用getUsername()而不是getName()，要统一起来
-        Assertions.assertEquals("invalid request", managerService.deleteStuffs(manager.getUsername()).getMessage());
+        Assertions.assertEquals("role permission deny", managerService.deleteStuffs(manager.getUsername()).getMessage());
 
     }
 
@@ -143,7 +143,7 @@ public class ManagerServiceTest {
         //when
         when(userService.findUserByName(user.getName())).thenReturn(user);
         //then
-        Assertions.assertEquals("invalid request", managerService.deleteStuffs(user.getName()).getMessage());
+        Assertions.assertEquals("role permission deny", managerService.deleteStuffs(user.getName()).getMessage());
     }
 
     @Test
