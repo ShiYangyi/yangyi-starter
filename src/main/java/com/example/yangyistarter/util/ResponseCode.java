@@ -23,7 +23,8 @@ public enum ResponseCode {
     USER_NOT_EXIST(10011, "user not exist"),
     RECEIPT_INVALID(10012, "receipt is invalid"),
     PICK_UP_CAR_SUCCESSFUL(10013, "pick up car successful"),
-    PARKING_SPACE_INVALID(10014, "free parking space and invalid request");
+    PARKING_SPACE_INVALID(10014, "free parking space and invalid request"),
+    ROLE_PERMISSION_DENY(10015, "role permission deny");
 
     private static final Set<String> Response_CODE_VALUES = ImmutableSet.copyOf(
             //注意写法，把获取到的code组成set集合。

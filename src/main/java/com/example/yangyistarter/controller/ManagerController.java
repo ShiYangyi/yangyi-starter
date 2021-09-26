@@ -30,9 +30,9 @@ public class ManagerController {
     // json需要转换成对象，这些数据流的转换工作都是框架去实现的，在实现自己写的方法之前，
     // 框架做了这些工作，当在方法中打了断点，在执行到return语句时，再单步调试就会进入到框架的代理方法。
     // 代理方法相当于是在自己的实现方法外面包裹了一层。
-    public ResponseCode addUser(@RequestBody User user) {
+    public ResponseCode addStuffs(@RequestBody User user) {
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        return managerService.addUser(user);
+        return managerService.addStuffs(user);
     }
 
     @PreAuthorize("hasRole('ROLE_MANAGER')")
@@ -48,7 +48,7 @@ public class ManagerController {
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         return managerService.deleteUser(user);
     }*/
-    public ResponseCode deleteUser(@PathVariable String name) {
-        return managerService.deleteUser(name);
+    public ResponseCode deleteStuffs(@PathVariable String name) {
+        return managerService.deleteStuffs(name);
     }
 }

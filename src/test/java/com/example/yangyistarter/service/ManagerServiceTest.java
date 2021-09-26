@@ -31,7 +31,7 @@ public class ManagerServiceTest {
         //when(userRepository.findAll()).thenReturn(Collections.singletonList(curUser));
         when(userService.findUserByName(manager.getUsername())).thenReturn(null);
         //then
-        Assertions.assertEquals("user registered successful", managerService.addUser(manager).getMessage());
+        Assertions.assertEquals("user registered successful", managerService.addStuffs(manager).getMessage());
 
     }
 
@@ -45,7 +45,7 @@ public class ManagerServiceTest {
         when(userRepository.save(cleverAssistant)).thenReturn(cleverAssistant);
         when(userService.findUserByName(cleverAssistant.getUsername())).thenReturn(null);
         //then
-        Assertions.assertEquals("user registered successful", managerService.addUser(cleverAssistant).getMessage());
+        Assertions.assertEquals("user registered successful", managerService.addStuffs(cleverAssistant).getMessage());
 
     }
 
@@ -59,7 +59,7 @@ public class ManagerServiceTest {
         when(userRepository.save(stupidAssistant)).thenReturn(stupidAssistant);
         when(userService.findUserByName(stupidAssistant.getUsername())).thenReturn(null);
         //then
-        Assertions.assertEquals("user registered successful", managerService.addUser(stupidAssistant).getMessage());
+        Assertions.assertEquals("user registered successful", managerService.addStuffs(stupidAssistant).getMessage());
     }
 
     @Test
@@ -72,7 +72,7 @@ public class ManagerServiceTest {
         when(userRepository.save(user)).thenReturn(user);
         when(userService.findUserByName(user.getUsername())).thenReturn(null);
         //then
-        Assertions.assertEquals("invalid request", managerService.addUser(user).getMessage());
+        Assertions.assertEquals("invalid request", managerService.addStuffs(user).getMessage());
     }
 
     @Test
@@ -85,7 +85,7 @@ public class ManagerServiceTest {
         when(userRepository.save(stupidAssistant)).thenReturn(stupidAssistant);
         when(userService.findUserByName(stupidAssistant.getUsername())).thenReturn(stupidAssistant);
         //then
-        Assertions.assertEquals("user already exists", managerService.addUser(stupidAssistant).getMessage());
+        Assertions.assertEquals("user already exists", managerService.addStuffs(stupidAssistant).getMessage());
     }
 
     @Test
@@ -99,7 +99,7 @@ public class ManagerServiceTest {
         when(userRepository.save(manager)).thenReturn(manager);
         when(userService.findUserByName(manager.getUsername())).thenReturn(manager);
         //注意上面的when语句是mock的getUsername()方法，不是getName()方法，所以，现在在判断语句中也是使用getUsername()而不是getName()，要统一起来
-        Assertions.assertEquals("invalid request", managerService.deleteUser(manager.getUsername()).getMessage());
+        Assertions.assertEquals("invalid request", managerService.deleteStuffs(manager.getUsername()).getMessage());
 
     }
 
@@ -113,7 +113,7 @@ public class ManagerServiceTest {
         //when
         when(userService.findUserByName(cleverAssistant.getUsername())).thenReturn(cleverAssistant);
         //then
-        Assertions.assertEquals("user delete successful", managerService.deleteUser(cleverAssistant.getUsername()).getMessage());
+        Assertions.assertEquals("user delete successful", managerService.deleteStuffs(cleverAssistant.getUsername()).getMessage());
         verify(userRepository).delete(any());
 
     }
@@ -128,7 +128,7 @@ public class ManagerServiceTest {
         //when
         when(userService.findUserByName(stupidAssistant.getUsername())).thenReturn(stupidAssistant);
         //then
-        Assertions.assertEquals("user delete successful", managerService.deleteUser(stupidAssistant.getUsername()).getMessage());
+        Assertions.assertEquals("user delete successful", managerService.deleteStuffs(stupidAssistant.getUsername()).getMessage());
         verify(userRepository).delete(any());
 
     }
@@ -143,7 +143,7 @@ public class ManagerServiceTest {
         //when
         when(userService.findUserByName(user.getName())).thenReturn(user);
         //then
-        Assertions.assertEquals("invalid request", managerService.deleteUser(user.getName()).getMessage());
+        Assertions.assertEquals("invalid request", managerService.deleteStuffs(user.getName()).getMessage());
     }
 
     @Test
@@ -155,7 +155,7 @@ public class ManagerServiceTest {
         //when
         when(userService.findUserByName(stupidAssistant.getName())).thenReturn(null);
         //then
-        Assertions.assertEquals("user not exist", managerService.deleteUser(stupidAssistant.getName()).getMessage());
+        Assertions.assertEquals("user not exist", managerService.deleteStuffs(stupidAssistant.getName()).getMessage());
     }
 
 }
