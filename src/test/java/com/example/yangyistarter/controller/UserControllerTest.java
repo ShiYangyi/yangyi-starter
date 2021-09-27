@@ -147,7 +147,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
         UserDTO userDTO = mock(UserDTO.class);
         when(userDTO.getRole()).thenReturn("ROLE_MANAGER");
         UserController userController = new UserController();
-        Assertions.assertEquals(ResponseCode.INVALID_REQUEST, userController.register(userDTO));
+        Assertions.assertEquals(ResponseCode.ROLE_PERMISSION_DENY, userController.register(userDTO));
     }
 
     @Test
@@ -155,7 +155,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
         UserDTO userDTO = mock(UserDTO.class);
         when(userDTO.getRole()).thenReturn("ROLE_CLEVER_ASSISTANT");
         UserController userController = new UserController();
-        Assertions.assertEquals(ResponseCode.INVALID_REQUEST, userController.register(userDTO));
+        Assertions.assertEquals(ResponseCode.ROLE_PERMISSION_DENY, userController.register(userDTO));
     }
 
     @Test
@@ -163,6 +163,6 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
         UserDTO userDTO = mock(UserDTO.class);
         when(userDTO.getRole()).thenReturn("ROLE_STUPID_ASSISTANT");
         UserController userController = new UserController();
-        Assertions.assertEquals(ResponseCode.INVALID_REQUEST, userController.register(userDTO));
+        Assertions.assertEquals(ResponseCode.ROLE_PERMISSION_DENY, userController.register(userDTO));
     }
 }

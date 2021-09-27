@@ -34,8 +34,8 @@ public class UserController {
     @PostMapping("/register")
     //@Validated
     public ResponseCode register(@RequestBody @Valid UserDTO userDTO) {
-        if(!"ROLE_USER".equals(userDTO.getRole())) {
-            return ResponseCode.INVALID_REQUEST;
+        if (!"ROLE_USER".equals(userDTO.getRole())) {
+            return ResponseCode.ROLE_PERMISSION_DENY;
         }
         userDTO.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
         return userService.register(User.builder().id(userDTO.getId()).name(userDTO.getName()).password(userDTO.getPassword()).role(userDTO.getRole()).build());

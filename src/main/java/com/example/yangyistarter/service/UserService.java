@@ -47,38 +47,29 @@ public class UserService {
     }*/
 
     public LoginResponse login(UserDTO userDTO) {
-
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
         //这里不要用JSONObject类，因为现在字段少，所以这样写可以，但是字段多就不适合了，所以最好是新建一个返回类，把需要的东西作为字段填充进去
         LoginResponse loginResponse = new LoginResponse();
-        /*JSONObject jsonObject = new JSONObject();*/
 
-        User user = User.builder().name(userDTO.getName()).password(userDTO.getPassword()).build();
-        User userForBase = findUserByName(user.getUsername());
-        /*User userForBase = findUserById(user.getId());*/
-        if (userForBase == null) {
+        //User user = User.builder().name(userDTO.getName()).password(userDTO.getPassword()).build();
+        User user = findUserByName(userDTO.getName());
+        if (user == null) {
             loginResponse.setMessage("登录失败,用户不存在");
-        } else {
-            if (!bCryptPasswordEncoder.matches(userDTO.getPassword(), userForBase.getPassword())) {
-                //if (!userForBase.getPassword().equals(bCryptPasswordEncoder.encode(user.getPassword()))) {
-                loginResponse.setMessage("登录失败,密码错误");
-            } else {
-                UserToken userToken = new UserToken(userForBase.getId().toString(), SecurityConstants.SECRET);
-                //UserToken userToken = new UserToken(userForBase.getId().toString(), userForBase.getPassword(), 100);
-                String token = userToken.getToken();
-                /*Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                String token = JWTLoginFilter.getToken(authentication);*/
-                loginResponse.setToken(token);
-                loginResponse.setUser(UserDTO.builder().name(userForBase.getName()).build());
-                //loginResponse.setUser(userForBase);
-                loginResponse.setMessage("登陆成功");
-            }
+        } else if (!bCryptPasswordEncoder.matches(userDTO.getPassword(), user.getPassword())) {
+            loginResponse.setMessage("登录失败,密码错误");
+        }else {
+            UserToken userToken = new UserToken(user.getId().toString(), SecurityConstants.SECRET);
+            String token = userToken.getToken();
+            /*Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String token = JWTLoginFilter.getToken(authentication);*/
+            loginResponse.setToken(token);
+            loginResponse.setUser(UserDTO.builder().name(user.getName()).build());
+            loginResponse.setMessage("登陆成功");
         }
         return loginResponse;
     }
 
-    //findUserByName()的实现不要使用findAll
     public User findUserByName(String username) {
         Optional<User> user = userRepository.findByName(username);
         return user.orElse(null);
