@@ -13,7 +13,6 @@ public class PickingController {
     PickingService pickingService;
     @PostMapping("/cars")
     public ResponseCode picking(@RequestParam Long receiptId) {
-
         return pickingService.picking(receiptId);
     }
 }

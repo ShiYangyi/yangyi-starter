@@ -14,5 +14,4 @@ public class GreetingController {
     public String hello() {
         return greetingService.hello();
     }
-
 }

@@ -27,18 +27,13 @@ public class ManagerControllerTest {
     ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
-    //会自动补齐前缀ROLE_
     @WithMockUser(roles = {"MANAGER"})
     public void should_return_status_200_when_manager_add_assistant() throws Exception {
-
-        //验证controller监听HTTP请求,调用MockMvc的perform()并提供要测试的URL
         MvcResult mvcResult = mockMvc.perform(post("/stuffs")
-                        //.content(objectMapper.writeValueAsString(curUser))
                         .content(objectMapper.writeValueAsString(user))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
         assertThat(mvcResult.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
-
     }
 
     @Test

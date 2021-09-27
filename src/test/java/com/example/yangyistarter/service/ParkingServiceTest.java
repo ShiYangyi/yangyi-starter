@@ -48,11 +48,8 @@ public class ParkingServiceTest {
         when(user.getRole()).thenReturn("ROLE_STUPID_ASSISTANT");
         when(parkingSpaceRepository.findAll()).thenReturn(Arrays.asList(parkingSpace1, parkingSpace2, parkingSpace3, parkingSpace7, parkingSpace7));
         when(parkingSpaceRepository.findById(11L)).thenReturn(Optional.of(parkingSpace1));
-        //mock的securityContextHolder无法调用getContext(),只有静态类才能调用
         when(securityContext.getAuthentication()).thenReturn(null);
         SecurityContextHolder.setContext(securityContext);
-        /*when(securityContext.getAuthentication()).thenReturn(authentication);
-        when(authentication.getPrincipal()).thenReturn(null);*/
         //then
         Assertions.assertEquals(11L, parkingService.parking(user));
     }
@@ -64,9 +61,6 @@ public class ParkingServiceTest {
         when(authentication.getPrincipal()).thenReturn(null);
         SecurityContextHolder.setContext(securityContext);
         //then
-        //下面方法的使用，第一个参数是异常类，所以写.class，第二个参数写可执行的方法，所以写成下面这种表达式的形式。并且这条验证语句的返回值中就可以获取到抛出的异常信息
-        /*Assertions.assertThrows(IllegalArgumentException.class, () -> parkingService.parking());
-        IllegalArgumentException err = Assertions.assertThrows(IllegalArgumentException.class, () -> parkingService.parking());*/
         IllegalArgumentException error = Assertions.assertThrows(IllegalArgumentException.class, () -> parkingService.parking(user));
         Assertions.assertEquals("没有合适的停车位", error.getMessage());
     }
@@ -93,9 +87,6 @@ public class ParkingServiceTest {
         SecurityContextHolder.setContext(securityContext);
         when(user.getRole()).thenReturn("ROLE_USER");
         //then
-        //下面方法的使用，第一个参数是异常类，所以写.class，第二个参数写可执行的方法，所以写成下面这种表达式的形式。并且这条验证语句的返回值中就可以获取到抛出的异常信息
-        /*Assertions.assertThrows(IllegalArgumentException.class, () -> parkingService.parking());
-        IllegalArgumentException err = Assertions.assertThrows(IllegalArgumentException.class, () -> parkingService.parking());*/
         IllegalArgumentException error = Assertions.assertThrows(IllegalArgumentException.class, () -> parkingService.parking(user));
         Assertions.assertEquals("没有合适的停车位", error.getMessage());
     }
@@ -109,7 +100,6 @@ public class ParkingServiceTest {
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.getPrincipal()).thenReturn(user);
         when(user.getRole()).thenReturn("ROLE_CLEVER_ASSISTANT");
-        //因为SecurityContextHolder是全局的，所以是不能mock对象的，于是需要把我这里mock的对象与SecurityContextHolder关联起来，通过set方法
         SecurityContextHolder.setContext(securityContext);
         //then
         Assertions.assertEquals(13L, parkingService.parking(user));
@@ -159,9 +149,6 @@ public class ParkingServiceTest {
 
     @Test
     public void should_return_available_receipt_id_when_random_and_available_parking_space_exist_and_user_log_in() {
-        //given
-        //不需要对随机数的生成方法进行mock，因为对我的测试无影响，可以在findById()方法中传入参数为anyInteger()
-        //ThreadLocalRandom threadLocalRandom = mock(ThreadLocalRandom.class);
         //when
         when(parkingSpaceRepository.findAll()).thenReturn(Arrays.asList(parkingSpace1, parkingSpace2, parkingSpace3, parkingSpace4, parkingSpace5, parkingSpace6, parkingSpace7, parkingSpace8));
         when(parkingSpaceRepository.findById(any())).thenReturn(Optional.of(parkingSpace3));
@@ -184,5 +171,18 @@ public class ParkingServiceTest {
         //then
         IllegalArgumentException error = Assertions.assertThrows(IllegalArgumentException.class, () -> parkingService.randomParking());
         Assertions.assertEquals("没有合适的停车位", error.getMessage());
+    }
+
+    @Test
+    public void should_return_id_0_when_random_and_user_not_exist() {
+        //when
+        when(parkingSpaceRepository.findAll()).thenReturn(Arrays.asList(parkingSpace1, parkingSpace2, parkingSpace3, parkingSpace4, parkingSpace5, parkingSpace6, parkingSpace7, parkingSpace8));
+        when(parkingSpaceRepository.findById(any())).thenReturn(Optional.empty());
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getPrincipal()).thenReturn(user);
+        SecurityContextHolder.setContext(securityContext);
+        when(user.getRole()).thenReturn("ROLE_MANAGER");
+        //then
+        Assertions.assertEquals(0L, parkingService.randomParking());
     }
 }

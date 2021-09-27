@@ -23,7 +23,6 @@ public class ParkingSpace {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    //在程序里面使用驼峰命令，在数据库中使用_以及小写
     @Column(name = "is_used")
     private Boolean isUsed;
     @Column(name = "receipt_id")

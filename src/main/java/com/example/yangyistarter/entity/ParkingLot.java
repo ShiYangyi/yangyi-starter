@@ -3,6 +3,7 @@ package com.example.yangyistarter.entity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 
 @Entity
@@ -22,13 +23,6 @@ public class ParkingLot {
     public static ParkingLotBuilder builder() {
         return new ParkingLotBuilder();
     }
-
-    /*@Override
-    public String toString() {
-        //Request{name='syy', password='1'},这是原来toString()的格式
-        //{"name": "po", "password": "0"}，重写后的格式
-        return "{\"name\": \"" + name + '\"' + ", \"username\": \"" + username + '\"' + '}';
-    }*/
 
     public static class ParkingLotBuilder {
         private Long id;
@@ -56,9 +50,5 @@ public class ParkingLot {
         public ParkingLot build() {
             return new ParkingLot(id, name, username);
         }
-
-        /*public String toString() {
-            return "ParkingLot.ParkingLotBuilder(id=" + this.id + ", name=" + this.name + ", username=" + this.username + ")";
-        }*/
     }
 }

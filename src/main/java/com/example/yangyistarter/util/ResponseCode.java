@@ -27,7 +27,6 @@ public enum ResponseCode {
     ROLE_PERMISSION_DENY(10015, "role permission deny");
 
     private static final Set<String> Response_CODE_VALUES = ImmutableSet.copyOf(
-            //注意写法，把获取到的code组成set集合。
             Arrays.stream(values()).map((item)->String.valueOf(item.getCode())).collect(Collectors.toSet())
     );
 

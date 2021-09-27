@@ -27,77 +27,40 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
         this.userService = userService;
     }
 
-    /*@Override
-    *//*从http头的Authorization读取token，用Jwts包的方法校验token合法性*//*
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        String header = request.getHeader("Authorization");
-        if (header == null || !header.startsWith("Bearer ")) {
-            chain.doFilter(request, response);
-            return;
-        }
-        UsernamePasswordAuthenticationToken authentication = getAuthentication(request);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        chain.doFilter(request, response);
-    }*/
-
-    //所有的请求都会进入到这个方法，当token为空时，可能访问的是login接口，也可能访问的是messages接口，如果是login接口，应该不拦截，
-    // 如果是messages接口，应该抛出错误，现在是两个接口会进行一致的处理，怎么区别两种请求，分别进行不同的动作。
-    // 这里当token为空时，先不用抛错，因为这里只用判断将token存储进去，单一职责，至于权限，就在对应的接口上使用@hasRole()和@hasAuthority()这两个注解来解决。
-
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain chain) throws IOException, ServletException {
-        // 从请求的header中取出token，token对应的header名字为Authorization,HttpHeaders.AUTHORIZATION=Authorization。
         String token = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (token != null && token.startsWith(SecurityConstants.TOKEN_PREFIX)) {
-            Pattern pattern = Pattern.compile(SecurityConstants.TOKEN_PREFIX);
-            Matcher matcher = pattern.matcher(token);
-            // 去除prefix后，对JWToken进行解析
-            Claims body = Jwts.parser()
-                    .setSigningKey(SecurityConstants.SECRET.getBytes(Charset.defaultCharset()))
-                    //下面语句，替换字符串的时候，只用替换字符串开头的Bearer (一个空格)，如果是编码后的字符串中间部分的Bearer 是不需要替换的。这个要怎么实现呢？怎么排除掉中间的相同的字符串？？？？
-                    //.parseClaimsJws(token.replace(SecurityConstants.TOKEN_PREFIX, ""))
-                    .parseClaimsJws(matcher.replaceFirst(""))
-                    .getBody();
-            long userId = (long) body.get("userId");
-            Optional<User> user = userService.findUserById(userId);
-            //user是Optional类，使用user.isPresent()，而不是用user.get()!=null,并不等同，
-            // 因为user.get()能够执行这个方法就说明这个不为空是恒成立的，因为get()方法只要成功就是不为空，否则就会抛错
-            if (user.isPresent()) {
-                PreAuthenticatedAuthenticationToken authenticationToken = new
-                        //下面存进去的第一个参数，存进去user.get()，不要存进去Optional类。
-                        PreAuthenticatedAuthenticationToken(user.get(), null, AuthorityUtils.commaSeparatedStringToAuthorityList(user.get().getRole()));
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-            } else {
-                // 如果用户不存在则返回401错误,Status code (401) indicating that the request requires HTTP authentication
-                //这里不会抛出异常，只会给前端返回can't find user的异常信息，所以写单元测试时就是写mock的Response对象有没有调用这个方法
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, String.format("can't find user %s", userId));
-            }
+        if (isUsableToken(token)) {
+            Claims body = parseToken(token);
+            fillAuthentication(response, body);
         }
-        /*else {
-            throw new UnauthorizedException(ResponseCode.INVALID_USER_INFO, String.format("missing authorization header"));
-        }*/
-        //当token为空时，直接调用下面这条语句，导致请求就在这里被放走了，如果有些请求的路径需要认证后才能访问，那么需要可以在filter中进行拦截处理，抛出错误。
         chain.doFilter(request, response);
     }
 
-    /*private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
-        String token = request.getHeader("Authorization");
-        if (token != null) {
-            //parse the token.
-            String user = Jwts.parser()
-                    .setSigningKey("MyJwtSecret")
-                    .parseClaimsJws(token.replace("Bearer ", ""))
-                    .getBody()
-                    .getSubject();
-
-            if (user != null) {
-                PreAuthenticatedAuthenticationToken authenticationToken = new
-                        PreAuthenticatedAuthenticationToken(user, null, new ArrayList<>());
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-            }
+    private void fillAuthentication(HttpServletResponse response, Claims body) throws IOException {
+        long userId = Long.parseLong(body.get("userId").toString());
+        Optional<User> user = userService.findUserById(userId);
+        if (user.isPresent()) {
+            PreAuthenticatedAuthenticationToken authenticationToken = new
+                    PreAuthenticatedAuthenticationToken(user.get(), null, AuthorityUtils.commaSeparatedStringToAuthorityList(user.get().getRole()));
+            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+        } else {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, String.format("can't find user %s", userId));
         }
-        return null;
-    }*/
+    }
+
+    private Claims parseToken(String token) {
+        Pattern pattern = Pattern.compile(SecurityConstants.TOKEN_PREFIX);
+        Matcher matcher = pattern.matcher(token);
+        return Jwts.parser()
+                .setSigningKey(SecurityConstants.SECRET.getBytes(Charset.defaultCharset()))
+                .parseClaimsJws(matcher.replaceFirst(""))
+                .getBody();
+    }
+
+    private boolean isUsableToken(String token) {
+        return token != null && token.startsWith(SecurityConstants.TOKEN_PREFIX);
+    }
 }
