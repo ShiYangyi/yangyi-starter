@@ -24,16 +24,16 @@ import static org.mockito.Mockito.*;
 @ExtendWith(SpringExtension.class)
 class JwtAuthenticationFilterTest {
 
+    AuthenticationManager authenticationManager = mock(AuthenticationManager.class);
+    UserService userService = mock(UserService.class);
+    JwtAuthenticationFilter filter = new JwtAuthenticationFilter(authenticationManager, userService);
+    HttpServletRequest httpServletRequest = mock(HttpServletRequest.class);
+    HttpServletResponse httpServletResponse = mock(HttpServletResponse.class);
+    FilterChain filterChain = mock(FilterChain.class);
+    User user = User.builder().id(18L).name("11112222").password("11111111111").build();
+
     @Test
     public void should_return_error_when_user_not_exist() throws ServletException, IOException {
-        AuthenticationManager authenticationManager = mock(AuthenticationManager.class);
-        UserService userService = mock(UserService.class);
-        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(authenticationManager, userService);
-
-        HttpServletRequest httpServletRequest = mock(HttpServletRequest.class);
-        HttpServletResponse httpServletResponse = mock(HttpServletResponse.class);
-        FilterChain filterChain = mock(FilterChain.class);
-
         when(httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer "+
                 Jwts.builder()
                         .claim("userId", 18L)
@@ -47,13 +47,6 @@ class JwtAuthenticationFilterTest {
 
     @Test
     public void should_return_success_when_user_exist() throws ServletException, IOException {
-        AuthenticationManager authenticationManager = mock(AuthenticationManager.class);
-        UserService userService = mock(UserService.class);
-        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(authenticationManager, userService);
-        HttpServletRequest httpServletRequest = mock(HttpServletRequest.class);
-        HttpServletResponse httpServletResponse = mock(HttpServletResponse.class);
-        FilterChain filterChain = mock(FilterChain.class);
-        User user = User.builder().id(18L).name("11112222").password("11111111111").build();
         when(httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer "+
                 Jwts.builder()
                         .claim("userId", 18L)
@@ -61,6 +54,25 @@ class JwtAuthenticationFilterTest {
                         .signWith(SignatureAlgorithm.HS512, SecurityConstants.SECRET.getBytes(Charset.defaultCharset()))
                         .compact());
         when(userService.findUserById(18L)).thenReturn(Optional.of(user));
+        filter.doFilterInternal(httpServletRequest, httpServletResponse, filterChain);
+        verify(httpServletResponse, never()).sendError(HttpServletResponse.SC_UNAUTHORIZED, String.format("can't find user %s", 18));
+    }
+
+    @Test
+    public void should_return_null_when_token_is_null() throws IOException, ServletException {
+        when(httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn(null);
+        filter.doFilterInternal(httpServletRequest, httpServletResponse, filterChain);
+        verify(httpServletResponse, never()).sendError(HttpServletResponse.SC_UNAUTHORIZED, String.format("can't find user %s", 18));
+    }
+
+    @Test
+    public void should_return_null_when_token_not_start_with_Bearer() throws IOException, ServletException {
+        when(httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn(
+                Jwts.builder()
+                        .claim("userId", 18L)
+                        .setExpiration(Date.from(Instant.now().plus(SecurityConstants.EXPIRES, ChronoUnit.MINUTES)))
+                        .signWith(SignatureAlgorithm.HS512, SecurityConstants.SECRET.getBytes(Charset.defaultCharset()))
+                        .compact());
         filter.doFilterInternal(httpServletRequest, httpServletResponse, filterChain);
         verify(httpServletResponse, never()).sendError(HttpServletResponse.SC_UNAUTHORIZED, String.format("can't find user %s", 18));
     }

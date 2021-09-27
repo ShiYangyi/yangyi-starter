@@ -58,6 +58,7 @@ public class ParkingServiceTest {
     public void should_throw_error_when_unavailable_parking_space_and_user_not_log_in() {
         //when
         when(parkingSpaceRepository.findAll()).thenReturn(Collections.emptyList());
+        when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.getPrincipal()).thenReturn(null);
         SecurityContextHolder.setContext(securityContext);
         //then
