@@ -7,6 +7,7 @@ import com.example.yangyistarter.repository.ParkingSpaceRepository;
 import com.example.yangyistarter.util.ResponseCode;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -16,20 +17,23 @@ public class ParkingLotService {
     ParkingSpaceRepository parkingSpaceRepository;
     UserService userService;
 
+    public ParkingLot findParkingLotByName(String name) {
+        Optional<ParkingLot> ParkingLot = parkingLotRepository.findByName(name);
+        return ParkingLot.orElse(null);
+    }
+
     public ResponseCode addParkingLot(ParkingLot parkingLot) {
-        for (ParkingLot curParkingLot : parkingLotRepository.findAll()) {
-            if (curParkingLot.getName().equals(parkingLot.getName())) {
-                return ResponseCode.PARKINGLOT_ALREADY_EXISTS;
-            }
+        if (findParkingLotByName(parkingLot.getName()) != null) {
+            return ResponseCode.PARKINGLOT_ALREADY_EXISTS;
         }
         parkingLotRepository.save(parkingLot);
         addParkingSpaces(parkingLot.getName());
         return ResponseCode.PARKINGLOT_ADD_SUCCESS;
     }
 
-    private void addParkingSpaces(String name) {
+    private void addParkingSpaces(String parkingLotName) {
         for (int index = 0; index < 50; index++) {
-            ParkingSpace parkingSpace = ParkingSpace.builder().isUsed(false).parkingLotName(name).build();
+            ParkingSpace parkingSpace = ParkingSpace.builder().isUsed(false).parkingLotName(parkingLotName).build();
             parkingSpaceRepository.save(parkingSpace);
             parkingSpace.setReceiptId(parkingSpace.getId());//因为没有repository的save操作之前，id值为空，所以这里set的receip_id值也为空，
             // 所以save到repository里receipt_id值也为空，如果在这条语句之前先添加一条save，那么存储到repository的receipt_id值不为空，但是这条语句之后，
@@ -38,13 +42,12 @@ public class ParkingLotService {
         }
     }
 
-    public ResponseCode deleteParkingLot(String name) {
-        for (ParkingLot curParkingLot : parkingLotRepository.findAll()) {
-            if (curParkingLot.getName().equals(name)) {
-                parkingLotRepository.delete(curParkingLot);
-                return ResponseCode.PARKINGLOT_DELETE_SUCCESS;
-            }
+    public ResponseCode deleteParkingLot(String parkingLotName) {
+        ParkingLot curParkingLot = findParkingLotByName(parkingLotName);
+        if(curParkingLot == null) {
+            return ResponseCode.PARKINGLOT_NOT_EXIST;
         }
-        return ResponseCode.PARKINGLOT_NOT_EXIST;
+        parkingLotRepository.delete(curParkingLot);
+        return ResponseCode.PARKINGLOT_DELETE_SUCCESS;
     }
 }
