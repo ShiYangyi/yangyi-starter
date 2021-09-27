@@ -14,7 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
@@ -31,8 +31,7 @@ public class ParkingLotControllerTest {
     public void should_return_status_200_when_manager_add_parking_lot() throws Exception {
 
         //验证controller监听HTTP请求,调用MockMvc的perform()并提供要测试的URL
-        MvcResult mvcResult = mockMvc.perform(post("/parkinglot/add")
-                        //.content(objectMapper.writeValueAsString(curUser))
+        MvcResult mvcResult = mockMvc.perform(post("/parkinglot")
                         .content(objectMapper.writeValueAsString(parkingLot))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
@@ -44,9 +43,7 @@ public class ParkingLotControllerTest {
     @WithMockUser(roles = {"CLEVER_ASSISTANT"})
     public void should_return_status_403_when_clever_assistant_add_parking_lot() throws Exception {
 
-        MvcResult mvcResult = mockMvc.perform(post("/parkinglot/add")
-                        //.content(objectMapper.writeValueAsString(curUser))
-                        //.content(curJson)
+        MvcResult mvcResult = mockMvc.perform(post("/parkinglot")
                         .content(objectMapper.writeValueAsString(parkingLot))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
@@ -58,8 +55,7 @@ public class ParkingLotControllerTest {
     @WithMockUser(roles = {"STUPID_ASSISTANT"})
     public void should_return_status_403_when_stupid_assistant_add_parking_lot() throws Exception {
 
-        MvcResult mvcResult = mockMvc.perform(post("/parkinglot/add")
-                        //.content(objectMapper.writeValueAsString(curUser))
+        MvcResult mvcResult = mockMvc.perform(post("/parkinglot")
                         .content(objectMapper.writeValueAsString(parkingLot))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
@@ -71,8 +67,7 @@ public class ParkingLotControllerTest {
     @WithMockUser()
     public void should_return_status_403_when_user_add_parking_lot() throws Exception {
 
-        MvcResult mvcResult = mockMvc.perform(post("/parkinglot/add")
-                        //.content(objectMapper.writeValueAsString(curUser))
+        MvcResult mvcResult = mockMvc.perform(post("/parkinglot")
                         .content(objectMapper.writeValueAsString(parkingLot))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
@@ -84,8 +79,7 @@ public class ParkingLotControllerTest {
     public void should_return_status_200_when_manager_delete_parking_lot() throws Exception {
 
         //验证controller监听HTTP请求,调用MockMvc的perform()并提供要测试的URL
-        MvcResult mvcResult = mockMvc.perform(get("/parkinglot/delete/parking_lot_1")
-                        //.content(objectMapper.writeValueAsString(curUser))
+        MvcResult mvcResult = mockMvc.perform(delete("/parkinglot/parking_lot_1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
         assertThat(mvcResult.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
@@ -96,8 +90,7 @@ public class ParkingLotControllerTest {
     @WithMockUser(roles = {"CLEVER_ASSISTANT"})
     public void should_return_status_403_when_clever_assistant_delete_parking_lot() throws Exception {
 
-        MvcResult mvcResult = mockMvc.perform(get("/parkinglot/delete/parking_lot_1")
-                        //.content(objectMapper.writeValueAsString(curUser))
+        MvcResult mvcResult = mockMvc.perform(delete("/parkinglot/parking_lot_1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
         assertThat(mvcResult.getResponse().getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
@@ -108,8 +101,7 @@ public class ParkingLotControllerTest {
     @WithMockUser(roles = {"STUPID_ASSISTANT"})
     public void should_return_status_403_when_stupid_assistant_delete_parking_lot() throws Exception {
 
-        MvcResult mvcResult = mockMvc.perform(get("/parkinglot/delete/parking_lot_1")
-                        //.content(objectMapper.writeValueAsString(curUser))
+        MvcResult mvcResult = mockMvc.perform(delete("/parkinglot/parking_lot_1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
         assertThat(mvcResult.getResponse().getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());
@@ -120,8 +112,7 @@ public class ParkingLotControllerTest {
     @WithMockUser()
     public void should_return_status_403_when_user_delete_parking_lot() throws Exception {
 
-        MvcResult mvcResult = mockMvc.perform(get("/parkinglot/delete/parking_lot_1")
-                        //.content(objectMapper.writeValueAsString(curUser))
+        MvcResult mvcResult = mockMvc.perform(delete("/parkinglot/parking_lot_1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
         assertThat(mvcResult.getResponse().getStatus()).isEqualTo(HttpStatus.FORBIDDEN.value());

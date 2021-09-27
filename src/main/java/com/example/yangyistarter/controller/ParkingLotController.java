@@ -10,20 +10,19 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/parkinglot")
 public class ParkingLotController {
     @Autowired
     ParkingLotService parkingLotService;
 
     @PreAuthorize("hasRole('ROLE_MANAGER')")
-    @PostMapping("/add")
+    @PostMapping("/parkinglot")
     //测试这个接口时需要带上token，否则是无法验证用户身份的
     public ResponseCode addParkingLot(@RequestBody ParkingLot parkingLot) {
         return parkingLotService.addParkingLot(parkingLot);
     }
 
     @PreAuthorize("hasRole('ROLE_MANAGER')")
-    @GetMapping("/delete/{name}")
+    @DeleteMapping("/parkinglot/{name}")
     //测试这个接口时需要带上token，否则是无法验证用户身份的，传参不应该为ParkingLot对象，应该是String类型的名字
     public ResponseCode deleteParkingLot(@PathVariable String name) {
         return parkingLotService.deleteParkingLot(name);
