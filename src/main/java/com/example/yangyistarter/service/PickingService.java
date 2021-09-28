@@ -6,7 +6,6 @@ import com.example.yangyistarter.util.ResponseCode;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.math.BigInteger;
 import java.util.Optional;
 
 @Service
@@ -15,7 +14,7 @@ public class PickingService {
 
     ParkingSpaceRepository parkingSpaceRepository;
 
-    public ResponseCode picking(BigInteger receiptId) {
+    public ResponseCode picking(long receiptId) {
         Optional<ParkingSpace> parkingSpace = parkingSpaceRepository.findById(receiptId);
         if (!parkingSpace.isPresent()) {
             return ResponseCode.RECEIPT_INVALID;

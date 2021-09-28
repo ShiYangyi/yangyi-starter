@@ -7,15 +7,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.math.BigInteger;
-
 @RestController
 @AllArgsConstructor
 public class PickingController {
     PickingService pickingService;
     @PostMapping("/cars")
-    public ResponseCode picking(@RequestParam BigInteger receiptId) {
-
+    public ResponseCode picking(@RequestParam Long receiptId) {
         return pickingService.picking(receiptId);
     }
 }

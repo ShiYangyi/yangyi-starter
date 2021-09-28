@@ -8,14 +8,9 @@ import lombok.Setter;
 @Setter
 public class LoginResponse {
     private String token;
-    //private User user;
     private UserDTO user;
     private String message;
 
     public LoginResponse() {
     }
-
-    /*public LoginResponse(UserDTO user) {
-        this.user = user;
-    }*/
 }
