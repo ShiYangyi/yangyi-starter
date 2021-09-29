@@ -28,7 +28,7 @@ public class UserController {
             return ResponseCode.ROLE_PERMISSION_DENY;
         }
         userDTO.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
-        return userService.register(User.builder().id(userDTO.getId()).name(userDTO.getName()).password(userDTO.getPassword()).role(userDTO.getRole()).build());
+        return userService.register(User.builder().name(userDTO.getName()).password(userDTO.getPassword()).role(userDTO.getRole()).build());
     }
 
     @PostMapping("/login")

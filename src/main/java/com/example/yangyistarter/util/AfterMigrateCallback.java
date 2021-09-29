@@ -13,6 +13,8 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import static java.util.Collections.*;
+
 @Component
 @RequiredArgsConstructor
 public class AfterMigrateCallback implements Callback, ApplicationContextAware {
@@ -33,7 +35,7 @@ public class AfterMigrateCallback implements Callback, ApplicationContextAware {
         UserRepository userRepository = applicationContext.getBean(UserRepository.class);
         UserService userService = applicationContext.getBean(UserService.class);
         BCryptPasswordEncoder bCryptPasswordEncoder = applicationContext.getBean(BCryptPasswordEncoder.class);
-        for (User user : userRepository.findAll()) {
+        for (User user : unmodifiableList(userRepository.findAll())) {
             if ("ROLE_MANAGER".equals(user.getRole())) {
                 return;
             }

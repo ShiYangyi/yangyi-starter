@@ -52,15 +52,15 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
     }
 
     private Claims parseToken(String token) {
-        Pattern pattern = Pattern.compile(SecurityConstants.TOKEN_PREFIX);
+        Pattern pattern = Pattern.compile(Constants.TOKEN_PREFIX);
         Matcher matcher = pattern.matcher(token);
         return Jwts.parser()
-                .setSigningKey(SecurityConstants.SECRET.getBytes(Charset.defaultCharset()))
+                .setSigningKey(Constants.SECRET.getBytes(Charset.defaultCharset()))
                 .parseClaimsJws(matcher.replaceFirst(""))
                 .getBody();
     }
 
     private boolean isUsableToken(String token) {
-        return token != null && token.startsWith(SecurityConstants.TOKEN_PREFIX);
+        return token != null && token.startsWith(Constants.TOKEN_PREFIX);
     }
 }

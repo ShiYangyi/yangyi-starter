@@ -25,18 +25,10 @@ public class AfterMigrateCallbackTest {
         when(applicationContext.getBean(UserRepository.class)).thenReturn(userRepository);
         when(applicationContext.getBean(UserService.class)).thenReturn(userService);
         when(applicationContext.getBean(BCryptPasswordEncoder.class)).thenReturn(bCryptPasswordEncoder);
-        //这条语句调用findAll()不能让它返回null，而是要返回空集合
         when(userRepository.findAll()).thenReturn(Collections.emptyList());
-        //verify方法只能传入mock对象作为参数，在调用register()方法时，传入的参数mock对象和new对象都是可行的，
-        // 这里疏漏的一点是根本没有去调用测试的方法，所以verify注册的方法是否执行，肯定是没有执行的。
-        //如果不加下面这条语句，那么运行到实现方法时，applicationContext为空。
         afterMigrateCallback.setApplicationContext(applicationContext);
         afterMigrateCallback.handle(event, context);
-        //注意这里register()传参数，不要写user，这样对象会不一致，写any()。
         verify(userService, times(1)).register(any());
-        //下面方法是用来验证方法有没有执行，可能把参数改为any也行得通。
-        //verify(userService).register(user);
-
     }
 
     @Test
@@ -49,7 +41,6 @@ public class AfterMigrateCallbackTest {
         when(userRepository.findAll()).thenReturn(Collections.singletonList(user));
         afterMigrateCallback.setApplicationContext(applicationContext);
         afterMigrateCallback.handle(event, context);
-        //注意这里register()传参数，不要写user，这样对象会不一致，写any()。
         verify(userService, times(0)).register(any());
     }
 
@@ -63,7 +54,6 @@ public class AfterMigrateCallbackTest {
         when(userRepository.findAll()).thenReturn(Collections.singletonList(user));
         afterMigrateCallback.setApplicationContext(applicationContext);
         afterMigrateCallback.handle(event, context);
-        //注意这里register()传参数，不要写user，这样对象会不一致，写any()。
         verify(userService, times(1)).register(any());
     }
 }

@@ -31,7 +31,7 @@ public class ManagerServiceTest {
         //when(userRepository.findAll()).thenReturn(Collections.singletonList(curUser));
         when(userService.findUserByName(manager.getUsername())).thenReturn(null);
         //then
-        Assertions.assertEquals("user registered successful", managerService.addStuffs(manager).getMessage());
+        Assertions.assertEquals("staff added successful", managerService.addStuffs(manager).getMessage());
 
     }
 
@@ -45,7 +45,7 @@ public class ManagerServiceTest {
         when(userRepository.save(cleverAssistant)).thenReturn(cleverAssistant);
         when(userService.findUserByName(cleverAssistant.getUsername())).thenReturn(null);
         //then
-        Assertions.assertEquals("user registered successful", managerService.addStuffs(cleverAssistant).getMessage());
+        Assertions.assertEquals("staff added successful", managerService.addStuffs(cleverAssistant).getMessage());
 
     }
 
@@ -59,7 +59,7 @@ public class ManagerServiceTest {
         when(userRepository.save(stupidAssistant)).thenReturn(stupidAssistant);
         when(userService.findUserByName(stupidAssistant.getUsername())).thenReturn(null);
         //then
-        Assertions.assertEquals("user registered successful", managerService.addStuffs(stupidAssistant).getMessage());
+        Assertions.assertEquals("staff added successful", managerService.addStuffs(stupidAssistant).getMessage());
     }
 
     @Test
@@ -113,7 +113,7 @@ public class ManagerServiceTest {
         //when
         when(userService.findUserByName(cleverAssistant.getUsername())).thenReturn(cleverAssistant);
         //then
-        Assertions.assertEquals("user delete successful", managerService.deleteStuffs(cleverAssistant.getUsername()).getMessage());
+        Assertions.assertEquals("staff delete successful", managerService.deleteStuffs(cleverAssistant.getUsername()).getMessage());
         verify(userRepository).delete(any());
 
     }
@@ -128,7 +128,7 @@ public class ManagerServiceTest {
         //when
         when(userService.findUserByName(stupidAssistant.getUsername())).thenReturn(stupidAssistant);
         //then
-        Assertions.assertEquals("user delete successful", managerService.deleteStuffs(stupidAssistant.getUsername()).getMessage());
+        Assertions.assertEquals("staff delete successful", managerService.deleteStuffs(stupidAssistant.getUsername()).getMessage());
         verify(userRepository).delete(any());
 
     }
