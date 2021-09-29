@@ -4,10 +4,12 @@ import com.example.yangyistarter.entity.ParkingLot;
 import com.example.yangyistarter.entity.ParkingSpace;
 import com.example.yangyistarter.repository.ParkingLotRepository;
 import com.example.yangyistarter.repository.ParkingSpaceRepository;
+import com.example.yangyistarter.util.Constants;
 import com.example.yangyistarter.util.ResponseCode;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -33,7 +35,7 @@ public class ParkingLotService {
     }
 
     private void addParkingSpaces(String parkingLotName) {
-        for (int index = 0; index < 50; index++) {
+        for (int index = 0; index < Constants.UNIT_PARKING_SPACE_COUNT; index++) {
             ParkingSpace parkingSpace = ParkingSpace.builder().isUsed(false).parkingLotName(parkingLotName).build();
             parkingSpaceRepository.save(parkingSpace);
             parkingSpace.setReceiptId(parkingSpace.getId());
@@ -47,6 +49,14 @@ public class ParkingLotService {
             return ResponseCode.PARKINGLOT_NOT_EXIST;
         }
         parkingLotRepository.delete(curParkingLot);
+        deleteParkingSpaces(parkingLotName);
         return ResponseCode.PARKINGLOT_DELETE_SUCCESS;
+    }
+
+    private void deleteParkingSpaces(String parkingLotName) {
+        List<Optional<ParkingSpace>> parkingSpaceList = parkingSpaceRepository.findByParkingLotName(parkingLotName);
+        for (Optional<ParkingSpace> parkingSpace : parkingSpaceList) {
+            parkingSpace.ifPresent(space -> parkingSpaceRepository.delete(space));
+        }
     }
 }

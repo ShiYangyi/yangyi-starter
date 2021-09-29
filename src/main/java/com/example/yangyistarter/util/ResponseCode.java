@@ -19,12 +19,13 @@ public enum ResponseCode {
     PARKINGLOT_ALREADY_EXISTS(10007, "parking lot already exists"),
     PARKINGLOT_DELETE_SUCCESS(10008, "parking lot delete success"),
     PARKINGLOT_NOT_EXIST(10009, "parking lot not exist"),
-    USER_DELETE_SUCCESS(10010,"user delete successful"),
+    STAFF_DELETE_SUCCESS(10010,"staff delete successful"),
     USER_NOT_EXIST(10011, "user not exist"),
     RECEIPT_INVALID(10012, "receipt is invalid"),
     PICK_UP_CAR_SUCCESSFUL(10013, "pick up car successful"),
     PARKING_SPACE_INVALID(10014, "free parking space and invalid request"),
-    ROLE_PERMISSION_DENY(10015, "role permission deny");
+    ROLE_PERMISSION_DENY(10015, "role permission deny"),
+    STAFF_ADD_SUCCESS(10016, "staff added successful");
 
     private static final Set<String> Response_CODE_VALUES = ImmutableSet.copyOf(
             Arrays.stream(values()).map((item)->String.valueOf(item.getCode())).collect(Collectors.toSet())

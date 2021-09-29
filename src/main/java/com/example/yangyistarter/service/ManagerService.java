@@ -21,7 +21,7 @@ public class ManagerService {
                 return ResponseCode.USER_ALREADY_EXISTS;
             }
             userRepository.save(user);
-            return ResponseCode.USER_REGISTER_SUCCESS;
+            return ResponseCode.STAFF_ADD_SUCCESS;
         }
         return ResponseCode.ROLE_PERMISSION_DENY;
     }
@@ -40,7 +40,7 @@ public class ManagerService {
         if (user != null) {
             if (roleIsAllowed(user, "delete")) {
                 userRepository.delete(user);
-                return ResponseCode.USER_DELETE_SUCCESS;
+                return ResponseCode.STAFF_DELETE_SUCCESS;
             }
             return ResponseCode.ROLE_PERMISSION_DENY;
         }

@@ -17,8 +17,8 @@ public class UserToken {
     public String getToken() {
         return Jwts.builder()
                 .claim("userId", userId)
-                .setExpiration(Date.from(Instant.now().plus(SecurityConstants.EXPIRES, ChronoUnit.MINUTES)))
-                .signWith(SignatureAlgorithm.HS512, SecurityConstants.SECRET.getBytes(Charset.defaultCharset()))
+                .setExpiration(Date.from(Instant.now().plus(Constants.EXPIRES, ChronoUnit.MINUTES)))
+                .signWith(SignatureAlgorithm.HS512, Constants.SECRET.getBytes(Charset.defaultCharset()))
                 .compact();
     }
 }

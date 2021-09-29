@@ -1,6 +1,7 @@
 package com.example.yangyistarter.service;
 
 import com.example.yangyistarter.entity.ParkingLot;
+import com.example.yangyistarter.entity.ParkingSpace;
 import com.example.yangyistarter.entity.User;
 import com.example.yangyistarter.repository.ParkingLotRepository;
 import com.example.yangyistarter.repository.ParkingSpaceRepository;
@@ -8,6 +9,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import java.util.Collections;
 import java.util.Optional;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -20,6 +23,7 @@ public class ParkingLotServiceTest {
     UserService userService = mock(UserService.class);
     User manager = mock(User.class);
     ParkingLot curParkingLot = mock(ParkingLot.class);
+    ParkingSpace parkingSpace = mock(ParkingSpace.class);
     ParkingLot parkingLot = ParkingLot.builder().id(1111L).name("parking lot 1").username("yyyyy").build();
     ParkingLotService parkingLotService = new ParkingLotService(parkingLotRepository, parkingSpaceRepository, userService);
 
@@ -55,6 +59,8 @@ public class ParkingLotServiceTest {
     @Test
     public void should_delete_parking_lot_when_parking_lot_exist() {
         when(parkingLotRepository.findByName("parking lot 1")).thenReturn(Optional.of(parkingLot));
+        when(parkingSpace.getParkingLotName()).thenReturn("parking lot 1");
+        when(parkingSpaceRepository.findByParkingLotName("parking lot 1")).thenReturn(Collections.singletonList(Optional.of(parkingSpace)));
         Assertions.assertEquals(10008, parkingLotService.deleteParkingLot(parkingLot.getName()).getCode());
         Assertions.assertEquals("parking lot delete success", parkingLotService.deleteParkingLot(parkingLot.getName()).getMessage());
     }

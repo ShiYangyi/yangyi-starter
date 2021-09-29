@@ -6,6 +6,7 @@ import com.example.yangyistarter.entity.User;
 import com.example.yangyistarter.repository.ParkingLotRepository;
 import com.example.yangyistarter.repository.ParkingSpaceRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -33,7 +34,7 @@ public class ParkingService {
     }
 
     private boolean userNotLogIn() {
-        return SecurityContextHolder.getContext().getAuthentication() == null || SecurityContextHolder.getContext().getAuthentication().getPrincipal() == null;
+        return SecurityContextHolder.getContext().getAuthentication() == null || SecurityContextHolder.getContext().getAuthentication() instanceof AnonymousAuthenticationToken;
     }
 
     private boolean isUserOrStupidAssistant(User user) {
@@ -96,8 +97,15 @@ public class ParkingService {
     }
 
     private void countSpacesInLot(Map<String, Integer> availableParkingSpaces, ParkingLot parkingLot) {
-        for (ParkingSpace parkingSpace : parkingSpaceRepository.findAll()) {
-            if (!parkingSpace.getIsUsed()) {
+        List<Optional<ParkingSpace>> parkingSpaceList = parkingSpaceRepository.findByParkingLotName(parkingLot.getName());
+        for (Optional<ParkingSpace> parkingSpace : parkingSpaceList) {
+            countSpaces(availableParkingSpaces, parkingLot, parkingSpace);
+        }
+    }
+
+    private void countSpaces(Map<String, Integer> availableParkingSpaces, ParkingLot parkingLot, Optional<ParkingSpace> parkingSpace) {
+        if (parkingSpace.isPresent()) {
+            if (!parkingSpace.get().getIsUsed()) {
                 availableParkingSpaces.put(parkingLot.getName(), availableParkingSpaces.getOrDefault(parkingLot.getName(), 0) + 1);
             }
         }

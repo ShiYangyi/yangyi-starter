@@ -37,8 +37,8 @@ class JwtAuthenticationFilterTest {
         when(httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer "+
                 Jwts.builder()
                         .claim("userId", 18L)
-                        .setExpiration(Date.from(Instant.now().plus(SecurityConstants.EXPIRES, ChronoUnit.MINUTES)))
-                        .signWith(SignatureAlgorithm.HS512, SecurityConstants.SECRET.getBytes(Charset.defaultCharset()))
+                        .setExpiration(Date.from(Instant.now().plus(Constants.EXPIRES, ChronoUnit.MINUTES)))
+                        .signWith(SignatureAlgorithm.HS512, Constants.SECRET.getBytes(Charset.defaultCharset()))
                         .compact());
         filter.doFilterInternal(httpServletRequest, httpServletResponse, filterChain);
         when(userService.findUserById(18L)).thenReturn(Optional.empty());
@@ -50,8 +50,8 @@ class JwtAuthenticationFilterTest {
         when(httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer "+
                 Jwts.builder()
                         .claim("userId", 18L)
-                        .setExpiration(Date.from(Instant.now().plus(SecurityConstants.EXPIRES, ChronoUnit.MINUTES)))
-                        .signWith(SignatureAlgorithm.HS512, SecurityConstants.SECRET.getBytes(Charset.defaultCharset()))
+                        .setExpiration(Date.from(Instant.now().plus(Constants.EXPIRES, ChronoUnit.MINUTES)))
+                        .signWith(SignatureAlgorithm.HS512, Constants.SECRET.getBytes(Charset.defaultCharset()))
                         .compact());
         when(userService.findUserById(18L)).thenReturn(Optional.of(user));
         filter.doFilterInternal(httpServletRequest, httpServletResponse, filterChain);
@@ -70,8 +70,8 @@ class JwtAuthenticationFilterTest {
         when(httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn(
                 Jwts.builder()
                         .claim("userId", 18L)
-                        .setExpiration(Date.from(Instant.now().plus(SecurityConstants.EXPIRES, ChronoUnit.MINUTES)))
-                        .signWith(SignatureAlgorithm.HS512, SecurityConstants.SECRET.getBytes(Charset.defaultCharset()))
+                        .setExpiration(Date.from(Instant.now().plus(Constants.EXPIRES, ChronoUnit.MINUTES)))
+                        .signWith(SignatureAlgorithm.HS512, Constants.SECRET.getBytes(Charset.defaultCharset()))
                         .compact());
         filter.doFilterInternal(httpServletRequest, httpServletResponse, filterChain);
         verify(httpServletResponse, never()).sendError(HttpServletResponse.SC_UNAUTHORIZED, String.format("can't find user %s", 18));

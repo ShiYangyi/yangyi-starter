@@ -8,13 +8,20 @@ import com.example.yangyistarter.repository.ParkingSpaceRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -34,6 +41,7 @@ public class ParkingServiceTest {
     ParkingSpace parkingSpace6 = ParkingSpace.builder().id(16L).receiptId(16L).isUsed(false).parkingLotName("parking_lot_2").build();
     ParkingSpace parkingSpace7 = ParkingSpace.builder().id(17L).receiptId(17L).isUsed(true).parkingLotName("parking_lot_1").build();
     ParkingSpace parkingSpace8 = ParkingSpace.builder().id(18L).receiptId(18L).isUsed(true).parkingLotName("parking_lot_2").build();
+    Optional<ParkingSpace> parkingSpace = mock(Optional.class);
 
     ParkingLot parkingLot1 = ParkingLot.builder().id(111L).name("parking_lot_1").username("user1").build();
     ParkingLot parkingLot2 = ParkingLot.builder().id(112L).name("parking_lot_2").username("user2").build();
@@ -41,6 +49,7 @@ public class ParkingServiceTest {
     User user = mock(User.class);
     SecurityContext securityContext = mock(SecurityContext.class);
     Authentication authentication = mock(Authentication.class);
+    AnonymousAuthenticationToken anonymousAuthenticationToken = mock(AnonymousAuthenticationToken.class);
 
     @Test
     public void should_return_available_receipt_id_when_available_parking_space_exist_and_user_not_log_in() {
@@ -58,8 +67,7 @@ public class ParkingServiceTest {
     public void should_throw_error_when_unavailable_parking_space_and_user_not_log_in() {
         //when
         when(parkingSpaceRepository.findAll()).thenReturn(Collections.emptyList());
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        when(authentication.getPrincipal()).thenReturn(null);
+        when(securityContext.getAuthentication()).thenReturn(anonymousAuthenticationToken);
         SecurityContextHolder.setContext(securityContext);
         //then
         IllegalArgumentException error = Assertions.assertThrows(IllegalArgumentException.class, () -> parkingService.parking(user));
@@ -95,7 +103,36 @@ public class ParkingServiceTest {
     @Test
     public void should_return_available_receipt_id_when_clever_and_available_parking_space_exist_and_user_log_in() {
         //when
+        Map<String, Integer> availableParkingSpaces = new HashMap<>();
+        availableParkingSpaces.put("parking_lot_2", 4);
+        availableParkingSpaces.put("parking_lot_1", 2);
         when(parkingLotRepository.findAll()).thenReturn(Arrays.asList(parkingLot1, parkingLot2));
+        List<Map.Entry<String, Integer>> availableParkingSpacesList = new ArrayList<>(availableParkingSpaces.entrySet());
+        availableParkingSpaces.entrySet().forEach(availableParkingSpacesList::add);
+        when(parkingSpaceRepository.findAll()).thenReturn(Arrays.asList(parkingSpace1, parkingSpace2, parkingSpace3, parkingSpace4, parkingSpace5, parkingSpace6, parkingSpace7, parkingSpace8));
+        when(parkingSpaceRepository.findByParkingLotName("parking_lot_1")).thenReturn(Arrays.asList(Optional.of(parkingSpace1), Optional.of(parkingSpace2), Optional.of(parkingSpace7)));
+        when(parkingSpaceRepository.findByParkingLotName("parking_lot_2")).thenReturn(Arrays.asList(Optional.of(parkingSpace3), Optional.of(parkingSpace4), Optional.of(parkingSpace5), Optional.of(parkingSpace6), Optional.of(parkingSpace8)));
+        when(parkingSpaceRepository.findById(13L)).thenReturn(Optional.of(parkingSpace3));
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getPrincipal()).thenReturn(user);
+        when(user.getRole()).thenReturn("ROLE_CLEVER_ASSISTANT");
+        SecurityContextHolder.setContext(securityContext);
+        //then
+        Assertions.assertEquals(13L, parkingService.parking(user));
+    }
+
+    @Test
+    public void should_return_receipt_id_when_clever_and_available_parking_space_exist_and_user_log_in() {
+        //when
+        when(parkingLotRepository.findAll()).thenReturn(Arrays.asList(parkingLot1, parkingLot2));
+        Map<String, Integer> availableParkingSpaces = new HashMap<>();
+        availableParkingSpaces.put("parking_lot_1", 2);
+        availableParkingSpaces.put("parking_lot_2", 4);
+        List<Map.Entry<String, Integer>> availableParkingSpacesList = new ArrayList<>(availableParkingSpaces.entrySet());
+        availableParkingSpaces.entrySet().forEach(availableParkingSpacesList::add);
+        when(parkingSpace.isPresent()).thenReturn(false);
+        when(parkingSpaceRepository.findByParkingLotName("parking_lot_1")).thenReturn(Arrays.asList(Optional.of(parkingSpace1), Optional.of(parkingSpace2), Optional.of(parkingSpace7)));
+        when(parkingSpaceRepository.findByParkingLotName("parking_lot_2")).thenReturn(Arrays.asList(parkingSpace, Optional.of(parkingSpace3), Optional.of(parkingSpace4), Optional.of(parkingSpace5), Optional.of(parkingSpace6), Optional.of(parkingSpace8)));
         when(parkingSpaceRepository.findAll()).thenReturn(Arrays.asList(parkingSpace1, parkingSpace2, parkingSpace3, parkingSpace4, parkingSpace5, parkingSpace6, parkingSpace7, parkingSpace8));
         when(parkingSpaceRepository.findById(13L)).thenReturn(Optional.of(parkingSpace3));
         when(securityContext.getAuthentication()).thenReturn(authentication);
